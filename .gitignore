@@ -9,3 +9,6 @@ sitegeist-latest.zip
 *.screenflow/
 *.mp4
 version.json
+
+# Archived original files (local reference only)
+archive/
