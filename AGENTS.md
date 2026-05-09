@@ -1,98 +1,94 @@
-# Sitegeist — Local Development Notes
+# Localgeist — Development Rules
 
-## What We Did
+## First Message
+If the user did not give you a concrete task, read README.md first.
 
-Merged PR from `origin/hja` (commit `c2a47b6`) — hybrid script cancellation for `browserjs()`. Promise wrapping removed (broke `new Promise()`), kept `__sitegeist_yield()` + V8 terminate backup.
+## What Is This Project
+Localgeist is a local-first fork of [Sitegeist](https://github.com/badlogic/sitegeist). All cloud API integrations (OAuth, API key dialogs, update checks) have been stripped. The extension works with locally running LLM models (llama.cpp, Ollama, LM Studio) via custom providers. Original files are preserved in `archive/`.
 
-**Files changed:**
-- `SCRIPT_CANCELLATION.md` — documentation of the cooperative cancellation approach
-- `src/prompts/prompts.ts` — added `__sitegeist_yield()` docs to system prompt
-- `src/tools/repl/runtime-providers.ts` — hybrid abort handler (cooperative flag + V8 terminate backup)
-- `src/tools/repl/userscripts-helpers.ts` — `__sitegeist_yield()` helper, timeout 30s (Promise wrapping removed)
+## Commands
+- After code changes: run `npm run check`. Fix all errors and warnings before committing.
+- The user runs `../pi-mono/dev.sh` or equivalent in a separate tmux session. Do not run `npm run dev` or `npm run build` unless asked.
+- NEVER commit unless the user asks.
 
-**Status: tested.** Local models (llama.cpp) work. Known issues documented in `known-issues.md`.
+## Code Quality
+- No `any` types unless absolutely necessary (7 tool `as any` casts are accepted — TypeScript contravariance with `AgentTool`, params validated by TypeBox schemas at runtime)
+- Check node_modules for external API type definitions instead of guessing
+- NEVER use inline imports (no `await import(...)`, no `import("pkg").Type`)
+- Always ask before removing functionality or code that appears intentional
 
-Original files preserved in `archive/`.
-
-## Deployment Code — Stripped
-
-All external server calls and GitHub deployment code has been removed:
-- `publish.sh`, `release.sh`, `.github/workflows/build.yml` — deleted
-- `UpdateNotificationDialog.ts` — deleted
-- `checkForUpdates()` + `isNewerVersion()` from `sidepanel.ts` — removed
-- `AboutTab.ts` — replaced with minimal placeholder
-- `site/run.sh` — deploy case removed
-- Tutorial proxy references — removed
-- `ApiKeysOAuthTab.ts` — moved to `archive/` (replaced by `ProvidersModelsTab` from `pi-web-ui`)
+## Dependencies
+- `@mariozechner/mini-lit`, `@mariozechner/pi-ai`, `@mariozechner/pi-web-ui`, `@mariozechner/pi-agent-core` are linked via `file:` to sibling repos `../mini-lit` and `../pi-mono`
+- Changes to those packages require rebuilding them (the dev watcher handles this)
+- If you need to modify upstream code, edit it in `../pi-mono` or `../mini-lit` directly and rebuild
 
 ## Changelog
+Location: `CHANGELOG.md`
 
-Location: `CHANGELOG.md` (original: `archive/CHANGELOG-original.md`)
+### Format
+Use these sections under `## [Unreleased]`:
+- `### Breaking Changes`
+- `### Added`
+- `### Changed`
+- `### Fixed`
+- `### Removed`
 
-After every code change, add an entry under `## [Unreleased]`. Format:
-- Sections: `### Added`, `### Changed`, `### Fixed`, `### Removed`
-- Latest entry always goes at the **top** of its subsection
-- Never modify already-released version sections
+### Rules
+- New entries ALWAYS go under `## [Unreleased]`
+- Append to existing subsections, do not create duplicates
+- NEVER modify already-released version sections
 
-## Code TODOs (documented, not yet fixed)
+## Style
+- No emojis in commits, code, or comments
+- No fluff or cheerful filler text
+- Technical prose only, direct and concise
 
-| Location | Issue | Status |
-|----------|-------|--------|
-| `sidepanel.ts:923` | `PersistentStorageDialog.request()` — request more storage quota | Commented out, keep as-is |
-| `userscripts-helpers.ts:335` | `enableSafeguards` parameter exists but not implemented | Placeholder, not a priority |
-| `sidepanel.ts:getApiKey` | Custom provider keys not found correctly, requires dummy API key workaround | Debug logging added, needs investigation |
-
-## Known Issues
-
-See `known-issues.md` for detailed documentation of:
-- Dummy API key requirement for local providers
-- Chat output flash/collapse UI bug
-- Context size showing default values
-- Cloud providers list too long
-
-## CORS Proxy Notes
-
-The proxy setting is only used for OAuth token refresh and `extract_document` tool. For local models (localhost), no proxy is needed — the extension has `http://localhost/*` and `http://127.0.0.1/*` in `host_permissions`.
+## Git Rules
+- NEVER use `git add -A` or `git add .`
+- ALWAYS use `git add <specific-file-paths>`
+- NEVER use `git reset --hard`, `git checkout .`, `git clean -fd`, `git stash`
+- NEVER use `git commit --no-verify`
+- Include `fixes #<number>` or `closes #<number>` in commit messages when applicable
 
 ## Building and Running
 
-Requires sibling repos at same level:
+Requires sibling repos:
 
 ```
 parent/
   mini-lit/
   pi-mono/
-  sitegeist/
+  sitegeist/    (this project)
 ```
 
 ### First-time setup
 
-Install and build all three (siblings first, then sitegeist):
-
 ```bash
-cd mini-lit  && npm install && npm run build
-cd ../pi-mono && npm install && npm run build
+cd ../mini-lit  && npm install && npm run build
+cd ../pi-mono   && npm install && npm run build
 cd ../sitegeist && npm install && npm run build
 ```
 
 ### Day-to-day
 
 ```bash
-./dev.sh          # all watchers (mini-lit, pi-mono, sitegeist, site)
 npm run dev       # sitegeist extension watcher only
 npm run build     # production build -> dist-chrome/
-npx tsc --noEmit  # typecheck (pre-existing errors expected, see below)
+npx tsc --noEmit  # typecheck
 ```
 
-### Dependencies
-
-After updating dependencies, run `npm audit fix --force` in all three directories, then rebuild all three. This is safe — all fixes are minor-version bumps (backward-compatible by semver).
-
-### Typecheck
-
-`npx tsc --noEmit` passes clean. 7 tool instances use `as any` casts due to TypeScript contravariance (tools accept typed params, `AgentTool<any,any>` expects `unknown`). Safe at runtime — params validated by TypeBox schemas before `execute` is called.
-
 Load `dist-chrome/` as unpacked extension in Chrome/Edge. Enable "Allow user scripts" in extension details.
+
+## Known Issues
+
+See `known-issues.md` for:
+- Dummy API key requirement for local providers
+- Chat output flash/collapse UI bug
+- Context size showing default values
+
+## CORS Proxy Notes
+
+The proxy setting is only used for OAuth token refresh and `extract_document` tool. For local models (localhost), no proxy is needed — the extension has `http://localhost/*` and `http://127.0.0.1/*` in `host_permissions`.
 
 ## Project Structure
 
@@ -100,16 +96,15 @@ Load `dist-chrome/` as unpacked extension in Chrome/Edge. Enable "Allow user scr
 src/
   sidepanel.ts          # Main entry point, agent setup, settings, rendering
   background.ts         # Service worker (sidepanel toggle, session locks)
-  oauth/                # Browser OAuth flows (Anthropic, OpenAI, GitHub, Gemini)
-  dialogs/              # Settings tabs, API key dialogs, welcome setup
+  dialogs/              # Settings tabs, costs, skills, welcome setup
   tools/                # Agent tools (navigate, REPL, extract-image, skills, debugger)
   messages/             # Custom message types (navigation, welcome)
   storage/              # IndexedDB storage (sessions, skills, costs)
   prompts/              # System prompt and token counting
   components/           # UI components (Toast, TabPill, OrbAnimation)
+  utils/                # Utilities (i18n, favicon, logger, port)
 static/
   manifest.chrome.json  # Extension manifest (version lives here)
-  cors-rules.json       # declarativeNetRequest CORS rules for OAuth
-site/
-  src/frontend/         # Static landing page and install instructions
+  cors-rules.json       # declarativeNetRequest CORS rules
+archive/                # Archived original files from upstream Sitegeist
 ```
