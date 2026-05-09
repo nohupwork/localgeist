@@ -15,6 +15,7 @@ import {
 	createExtractDocumentTool,
 	createStreamFn,
 	ModelSelector,
+	ProvidersModelsTab,
 	ProxyTab,
 	SettingsDialog,
 	// PersistentStorageDialog,
@@ -24,13 +25,10 @@ import {
 import { html, render } from "lit";
 import { History, Plus, Settings } from "lucide";
 import { AboutTab } from "./dialogs/AboutTab.js";
-import { ApiKeyOrOAuthDialog } from "./dialogs/ApiKeyOrOAuthDialog.js";
-import { ApiKeysOAuthTab } from "./dialogs/ApiKeysOAuthTab.js";
 import { CostsTab } from "./dialogs/CostsTab.js";
 import { SessionCostDialog } from "./dialogs/SessionCostDialog.js";
 import { SitegeistSessionListDialog } from "./dialogs/SessionListDialog.js";
 import { SkillsTab } from "./dialogs/SkillsTab.js";
-import { UpdateNotificationDialog } from "./dialogs/UpdateNotificationDialog.js";
 import { UserScriptsPermissionDialog } from "./dialogs/UserScriptsPermissionDialog.js";
 import { WelcomeSetupDialog } from "./dialogs/WelcomeSetupDialog.js";
 import { browserMessageTransformer } from "./messages/message-transformer.js";
@@ -141,7 +139,7 @@ async function selectDefaultModelForAvailableProvider() {
 		if (modelId) {
 			const model = getModel(provider as any, modelId);
 			if (model) {
-				agent.setModel(model);
+				agent.state.model = model;
 				await storage.settings.set("lastUsedModel", model);
 				await updateAuthLabel();
 				renderApp();
@@ -154,7 +152,7 @@ async function selectDefaultModelForAvailableProvider() {
 	for (const provider of providers) {
 		const models = getModels(provider as any);
 		if (models.length > 0) {
-			agent.setModel(models[0]);
+			agent.state.model = models[0];
 			await storage.settings.set("lastUsedModel", models[0]);
 			await updateAuthLabel();
 			renderApp();
@@ -170,18 +168,25 @@ async function getProvidersWithKeys(): Promise<string[]> {
 		const key = await storage.providerKeys.get(provider);
 		if (key) result.push(provider);
 	}
+	// Also include custom/local providers
+	const customProviders = await storage.customProviders.getAll();
+	for (const cp of customProviders) {
+		if (!result.includes(cp.name)) result.push(cp.name);
+	}
 	return result;
 }
 
 async function hasAnyApiKey(): Promise<boolean> {
-	const providers = await storage.providerKeys.list();
-	return providers.length > 0;
+	const cloudProviders = await storage.providerKeys.list();
+	if (cloudProviders.length > 0) return true;
+	const customProviders = await storage.customProviders.getAll();
+	return customProviders.length > 0;
 }
 
 function openApiKeysDialog(): Promise<void> {
 	return new Promise((resolve) => {
 		SettingsDialog.open(
-			[new ApiKeysOAuthTab(), new CostsTab(), new SkillsTab(), new ProxyTab(), new AboutTab()],
+			[new ProvidersModelsTab(), new CostsTab(), new SkillsTab(), new ProxyTab(), new AboutTab()],
 			resolve,
 		);
 	});
@@ -394,11 +399,21 @@ const createAgent = async (initialState?: Partial<AgentState>, shouldSave = true
 			return (await storage.settings.get<string>("proxy.url")) || undefined;
 		}),
 		getApiKey: async (provider: string) => {
+			// Check cloud provider keys first
 			const stored = await storage.providerKeys.get(provider);
-			if (!stored) return undefined;
-			const proxyEnabled = await storage.settings.get<boolean>("proxy.enabled");
-			const proxyUrl = proxyEnabled ? (await storage.settings.get<string>("proxy.url")) || undefined : undefined;
-			return resolveApiKey(stored, provider, storage.providerKeys, proxyUrl);
+			if (stored) {
+				const proxyEnabled = await storage.settings.get<boolean>("proxy.enabled");
+				const proxyUrl = proxyEnabled ? (await storage.settings.get<string>("proxy.url")) || undefined : undefined;
+				return resolveApiKey(stored, provider, storage.providerKeys, proxyUrl);
+			}
+			// Check custom/local providers - any custom provider match returns empty string (no key needed)
+			// TODO: Custom provider keys not found correctly, requires dummy API key workaround (see known-issues.md)
+			const customProviders = await storage.customProviders.getAll();
+			const custom = customProviders.find(p => p.name === provider);
+			if (custom) {
+				return custom.apiKey || "";
+			}
+			return undefined;
 		},
 	});
 
@@ -462,23 +477,35 @@ const createAgent = async (initialState?: Partial<AgentState>, shouldSave = true
 			return chrome.runtime.getURL("sandbox.html");
 		},
 		onApiKeyRequired: async (provider: string) => {
-			return await ApiKeyOrOAuthDialog.prompt(provider);
+			// Check if this is a custom/local provider (no API key needed)
+			const customProviders = await storage.customProviders.getAll();
+			const isCustom = customProviders.some(p => p.name === provider || p.baseUrl === provider);
+			if (isCustom) {
+				return true; // Custom providers don't need API keys
+			}
+			// Cloud provider needs a key - open settings
+			openApiKeysDialog();
+			return false;
 		},
 		onModelSelect: async () => {
 			const providers = await getProvidersWithKeys();
-			if (providers.length === 0) {
+			// Check for custom/local providers too
+			const customProviders = await storage.customProviders.getAll();
+			if (providers.length === 0 && customProviders.length === 0) {
 				openApiKeysDialog();
 				return;
 			}
+			// Only filter by allowed providers if there are cloud providers with keys
+			// Otherwise show all (including custom providers)
 			ModelSelector.open(
 				agent.state.model,
 				(model) => {
-					agent.setModel(model);
+					agent.state.model = model;
 					chatPanel.agentInterface?.requestUpdate();
 					updateAuthLabel().catch(() => {});
 					renderApp();
 				},
-				providers,
+				providers.length > 0 ? providers : undefined,
 			);
 		},
 		onBeforeSend: async () => {
@@ -508,7 +535,7 @@ const createAgent = async (initialState?: Partial<AgentState>, shouldSave = true
 			// Only add if URL changed
 			if (!lastUrl || lastUrl !== tab.url) {
 				const navMessage = await createNavigationMessage(tab.url, tab.title || "Untitled", tab.favIconUrl, tab.id);
-				agent.appendMessage(navMessage);
+				agent.state.messages.push(navMessage);
 			}
 		},
 		onCostClick: () => {
@@ -547,18 +574,18 @@ const createAgent = async (initialState?: Partial<AgentState>, shouldSave = true
 			extractImageTool.windowId = currentWindowId;
 
 			const tools: AgentTool<any, any>[] = [
-				navigateTool,
-				selectElementTool,
-				replTool,
-				skillTool,
-				extractDocumentTool,
-				extractImageTool,
+				navigateTool as any,
+				selectElementTool as any,
+				replTool as any,
+				skillTool as any,
+				extractDocumentTool as any,
+				extractImageTool as any,
 			];
 
 			// Conditionally add debugger tool if enabled
 			if (debuggerModeEnabled) {
 				const debuggerTool = new DebuggerTool();
-				tools.push(debuggerTool);
+				tools.push(debuggerTool as any);
 			}
 
 			return tools;
@@ -646,17 +673,6 @@ const renderApp = () => {
 										type: "text",
 										value: currentTitle,
 										className: "text-sm w-48",
-										/*
-										TODO need to add this in Input in mini-lit
-										onBlur: async (e: Event) => {
-											const newTitle = (e.target as HTMLInputElement).value.trim();
-											if (newTitle && newTitle !== currentTitle && storage.sessions && currentSessionId) {
-												await storage.sessions.updateTitle(currentSessionId, newTitle);
-												currentTitle = newTitle;
-											}
-											isEditingTitle = false;
-											renderApp();
-										},*/
 										onKeyDown: async (e: KeyboardEvent) => {
 											if (e.key === "Enter") {
 												const newTitle = (e.target as HTMLInputElement).value.trim();
@@ -702,7 +718,7 @@ const renderApp = () => {
 						children: icon(Settings, "sm"),
 						onClick: () =>
 							SettingsDialog.open([
-								new ApiKeysOAuthTab(),
+								new ProvidersModelsTab(),
 								new CostsTab(),
 								new SkillsTab(),
 								new ProxyTab(),
@@ -863,44 +879,6 @@ async function testSteps(): Promise<boolean> {
 }
 
 // ============================================================================
-// UPDATE CHECK
-// ============================================================================
-function isNewerVersion(latest: string, current: string): boolean {
-	const latestParts = latest.split(".").map(Number);
-	const currentParts = current.split(".").map(Number);
-
-	for (let i = 0; i < Math.max(latestParts.length, currentParts.length); i++) {
-		const l = latestParts[i] || 0;
-		const c = currentParts[i] || 0;
-		if (l > c) return true;
-		if (l < c) return false;
-	}
-	return false;
-}
-
-async function checkForUpdates() {
-	try {
-		const currentVersion = chrome.runtime.getManifest().version;
-
-		// Fetch latest version
-		const response = await fetch("https://sitegeist.ai/uploads/version.json", {
-			cache: "no-cache",
-		});
-		const data = await response.json();
-		const latestVersion = data.version;
-
-		// Show dialog only if server version is newer than current version
-		if (isNewerVersion(latestVersion, currentVersion)) {
-			// Show update dialog - blocks until extension is updated and restarted
-			await UpdateNotificationDialog.show(latestVersion);
-		}
-	} catch (err) {
-		console.warn("[Sidepanel] Failed to check for updates:", err);
-		// Silently fail - don't block startup
-	}
-}
-
-// ============================================================================
 // INIT
 // ============================================================================
 async function initApp() {
@@ -938,9 +916,6 @@ async function initApp() {
 	if (!chrome.userScripts) {
 		await UserScriptsPermissionDialog.request();
 	}
-
-	// TODO: re-enable update check when publishing to users
-	// await checkForUpdates();
 
 	// Initialize default skills
 	const { initializeDefaultSkills } = await import("./tools/skill.js");
@@ -997,7 +972,7 @@ async function initApp() {
 				await createAgent();
 				if (agent) {
 					const welcomeMessage = createWelcomeMessage(tutorials);
-					agent.appendMessage(welcomeMessage);
+					agent.state.messages.push(welcomeMessage);
 				}
 				renderApp();
 				return;
@@ -1030,7 +1005,7 @@ async function initApp() {
 	// Add welcome message for new sessions
 	if (agent) {
 		const welcomeMessage = createWelcomeMessage(tutorials);
-		agent.appendMessage(welcomeMessage);
+		agent.state.messages.push(welcomeMessage);
 	}
 
 	renderApp();

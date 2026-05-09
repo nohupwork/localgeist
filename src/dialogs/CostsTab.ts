@@ -2,11 +2,13 @@ import { Select, type SelectOption } from "@mariozechner/mini-lit/dist/Select.js
 import { SettingsTab } from "@mariozechner/pi-web-ui";
 import { Chart, type ChartConfiguration, registerables } from "chart.js";
 import { html, type PropertyValues } from "lit";
+import { customElement } from "lit/decorators.js";
 import { getSitegeistStorage } from "../storage/app-storage.js";
 
 // Register Chart.js components
 Chart.register(...registerables);
 
+@customElement("sg-costs-tab")
 export class CostsTab extends SettingsTab {
 	label = "Costs";
 	private dateRange: "today" | "week" | "30days" | "90days" | "alltime" = "30days";
@@ -379,4 +381,4 @@ export class CostsTab extends SettingsTab {
 	}
 }
 
-customElements.define("costs-tab", CostsTab);
+

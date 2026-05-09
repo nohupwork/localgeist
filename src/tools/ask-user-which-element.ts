@@ -8,7 +8,7 @@ import {
 	type ToolRenderer,
 	type ToolRenderResult,
 } from "@mariozechner/pi-web-ui";
-import { type Static, Type } from "@sinclair/typebox";
+import { type Static, Type } from "typebox";
 import { html } from "lit";
 import { createRef, ref } from "lit/directives/ref.js";
 import { Loader2, MousePointer2 } from "lucide";
@@ -531,6 +531,7 @@ export class AskUserWhichElementTool implements AgentTool<typeof selectElementSc
 		_toolCallId: string,
 		args: SelectElementParams,
 		signal?: AbortSignal,
+		_onUpdate?: (result: { content: Array<{ type: "text"; text: string }>; details: SelectElementResult }) => void,
 	): Promise<{ content: Array<{ type: "text"; text: string }>; details: SelectElementResult }> {
 		try {
 			// Check if already aborted

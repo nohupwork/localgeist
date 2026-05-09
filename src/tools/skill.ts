@@ -12,7 +12,7 @@ import {
 	type ToolRenderer,
 	type ToolRenderResult,
 } from "@mariozechner/pi-web-ui";
-import { type Static, Type } from "@sinclair/typebox";
+import { type Static, Type } from "typebox";
 import { html, type TemplateResult } from "lit";
 import { createRef, ref } from "lit/directives/ref.js";
 import { Sparkles } from "lucide";
@@ -200,7 +200,7 @@ export const skillTool: AgentTool<typeof skillParamsSchema, any> = {
 	name: "skill",
 	description: SKILL_TOOL_DESCRIPTION,
 	parameters: skillParamsSchema,
-	execute: async (_toolCallId: string, args: SkillParams) => {
+	execute: async (_toolCallId: string, args: SkillParams, _signal?: AbortSignal, _onUpdate?: any) => {
 		const skillsRepo = getSkills();
 		const [tab] = await chrome.tabs.query({
 			active: true,

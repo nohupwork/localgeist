@@ -2,6 +2,42 @@
 
 ## [Unreleased]
 
+### Removed
+
+- `README.md` references to external servers: download links (`sitegeist.ai`), CORS proxy (`proxy.mariozechner.at`), website deploy instructions, release instructions
+- Deployment infrastructure: `publish.sh`, `release.sh`, `.github/workflows/build.yml`
+- Update check mechanism: `checkForUpdates()` function, `UpdateNotificationDialog`, `isNewerVersion()` helper — extension no longer contacts `sitegeist.ai` for version checks
+- `UpdateNotificationDialog.ts` — no longer used
+- Deploy case from `site/run.sh` — SSH/rsync to external server removed
+- CORS proxy references from tutorial text
+- External telemetry: all calls to `sitegeist.ai` and `proxy.mariozechner.at` removed
+
+### Changed
+
+- `@tailwindcss/cli` upgraded from `^4.0.0-beta.14` to `^4.2.0` (stable release)
+- `AboutTab` replaced with minimal placeholder (removed website links and update check)
+- Added `typescript` as explicit dev dependency for `npm run typecheck`
+- Fixed TypeScript errors: replaced removed Agent API methods (`setModel` → `state.model`, `appendMessage` → `state.messages.push`, `replaceMessages` → `state.messages =`), added `onUpdate` parameter to tool `execute` methods, cast tool instances for `AgentTool` contravariance (tools accept typed params, interface expects `unknown`), cleaned up unused `@ts-expect-error` directives in cancellation code
+- Replaced `@sinclair/typebox` 0.34.x with `typebox` 1.x (package rename) to align with `pi-mono`
+- Verified all imports from `pi-mono` (pi-agent-core, pi-ai, pi-web-ui) and `mini-lit` are compatible with latest versions
+
+### Added
+
+- Gmail automation skill: integrated `gmail.md` into `default-skills.ts` — 15 functions for composing, reading, replying, searching, and managing emails on `mail.google.com`
+- Local model support: replaced `ApiKeysOAuthTab` with `ProvidersModelsTab` from `pi-web-ui` — Ollama, llama.cpp (port 8080), vLLM, LM Studio discovery now available in settings
+- Hybrid script cancellation for `browserjs()` — `__sitegeist_yield()` helper + V8 `terminate()` backup (PR `c2a47b6`). Promise wrapping removed (broke page contexts). Timeout reduced from 120s to 30s.
+- `SCRIPT_CANCELLATION.md` — documentation of the cooperative cancellation approach
+
+### Fixed
+
+- Added `@customElement` decorators to `AboutTab`, `SkillsTab`, `CostsTab` — required by Lit for classes extending `SettingsTab`/`LitElement`, prevents "Illegal constructor" runtime error
+- Removed `ApiKeyOrOAuthDialog` from `onApiKeyRequired` callback — now opens settings dialog so local providers can be configured
+- Moved unused `ApiKeyOrOAuthDialog.ts` to `archive/`
+- ModelSelector now includes custom/local providers in model selection (was filtered out by `allowedProviders` check)
+- `getApiKey` now checks custom providers for API keys, returns empty string for local types (llama.cpp, Ollama, etc.)
+- `hasAnyApiKey` and `getProvidersWithKeys` now include custom/local providers (fixes new chat asking for provider setup)
+- Removed broken Promise constructor wrapping from browserjs() that caused "Promise is not a constructor" errors
+
 ## [1.0.0] - 2026-03-15
 
 ### Added

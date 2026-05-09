@@ -8,9 +8,13 @@ Sitegeist can automate repetitive web tasks, extract data from any website, navi
 
 Bring your own API key or log in with an existing subscription (Anthropic Claude, OpenAI/ChatGPT, GitHub Copilot, Google Gemini). Your data stays on your machine. Nothing is collected or tracked.
 
-## Download & Install
+## Building & Install
 
-Visit [sitegeist.ai](https://sitegeist.ai) for download links and step-by-step installation instructions.
+```bash
+npm run build
+```
+
+Load `dist-chrome/` as an unpacked extension in Chrome/Edge (see Development section below).
 
 Requires Chrome 141+ or Edge equivalent.
 
@@ -63,9 +67,7 @@ The extension hot-reloads when the dev watcher rebuilds.
 
 ### First run
 
-On first launch, Sitegeist prompts you to connect at least one AI provider. You can log in with a subscription or enter an API key.
-
-Some subscription logins require the CORS proxy (configurable in Settings > Proxy). The default proxy is `https://proxy.mariozechner.at/proxy`.
+On first launch, Sitegeist prompts you to connect at least one AI provider. Enter an API key for your provider.
 
 ## Checks
 
@@ -84,24 +86,6 @@ npm run build
 ```
 
 The unpacked extension is written to `dist-chrome/`.
-
-## Updating the website
-
-```bash
-cd site && ./run.sh deploy
-```
-
-Builds the static site and uploads it to `sitegeist.ai`. Requires SSH access to `slayer.marioslab.io`.
-
-## Releasing
-
-```bash
-./release.sh patch   # 1.0.0 -> 1.0.1
-./release.sh minor   # 1.0.0 -> 1.1.0
-./release.sh major   # 1.0.0 -> 2.0.0
-```
-
-Bumps the version in `static/manifest.chrome.json`, commits, tags, and pushes. GitHub Actions builds the extension and creates a release at [github.com/badlogic/sitegeist/releases](https://github.com/badlogic/sitegeist/releases).
 
 ## License
 

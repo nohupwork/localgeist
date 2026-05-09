@@ -5,8 +5,10 @@ import { html } from "lit";
 import { Toast } from "../components/Toast.js";
 import { getSitegeistStorage } from "../storage/app-storage.js";
 import type { Skill } from "../storage/stores/skills-store.js";
+import { customElement } from "lit/decorators.js";
 import { getFaviconUrl } from "../utils/favicon.js";
 
+@customElement("sg-skills-tab")
 export class SkillsTab extends SettingsTab {
 	label = "Skills";
 	private skills: Skill[] = [];
@@ -389,4 +391,4 @@ export class SkillsTab extends SettingsTab {
 	}
 }
 
-customElements.define("skills-tab", SkillsTab);
+

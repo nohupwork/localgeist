@@ -2,7 +2,7 @@ import { i18n, icon } from "@mariozechner/mini-lit";
 import type { AgentTool } from "@mariozechner/pi-agent-core";
 import type { ToolResultMessage } from "@mariozechner/pi-ai";
 import { registerToolRenderer, type ToolRenderer, type ToolRenderResult } from "@mariozechner/pi-web-ui";
-import { type Static, Type } from "@sinclair/typebox";
+import { type Static, Type } from "typebox";
 import { html } from "lit";
 import { Loader2 } from "lucide";
 import { SkillPill } from "../components/SkillPill.js";
@@ -73,6 +73,7 @@ export class NavigateTool implements AgentTool<typeof navigateSchema, NavigateRe
 		_toolCallId: string,
 		args: NavigateParams,
 		signal?: AbortSignal,
+		_onUpdate?: (result: { content: Array<{ type: "text"; text: string }>; details: NavigateResult }) => void,
 	): Promise<{ content: Array<{ type: "text"; text: string }>; details: NavigateResult }> {
 		if (signal?.aborted) {
 			throw new Error("Navigation aborted");

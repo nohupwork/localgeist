@@ -36,8 +36,8 @@ export class WelcomeSetupDialog extends DialogBase {
 					})}
 					<p class="text-sm text-foreground">
 						To get started, you need to connect at least one AI provider.
-						You can either log in with an existing subscription (Anthropic, OpenAI, or GitHub Copilot)
-						or enter an API key.
+						Options include local models (llama.cpp, Ollama, LM Studio),
+						cloud providers (Anthropic, OpenAI, Gemini), or API keys.
 					</p>
 					<div class="flex justify-end">
 						${Button({

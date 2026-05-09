@@ -72,7 +72,7 @@ Explain the UI elements:
 - New session icon → Start fresh
 - Session title field → Click to rename the current session
 - Theme toggle → Switch between system/light/dark theme
-- Settings icon → Configure API keys, skills, proxy settings
+- Settings icon → Configure API keys and skills
 
 **Message Editor (bottom):**
 - Attachment icon → Attach files to chat
@@ -87,7 +87,6 @@ Explain where data is stored and who gets what:
 - **Settings & API keys**: Stored locally on your computer only
 - **Sessions & attachments**: Stored locally on your computer only
 - **When you send messages**: All text and attachments in the chat session are sent to the LLM provider (default: Anthropic). They're configured to not retain your data or use it for training
-- **CORS proxy** (on by default): If enabled in settings, requests to the LLM go through the proxy due to CORS restrictions when using an Anthropic OAuth token, or using Z-AI. Default is https://proxy.mariozechner.at/proxy which does not retain or log data. Use your own proxy or a service like corsproxy.io if preferred
 
 STOP.
 
