@@ -469,6 +469,15 @@ const createAgent = async (initialState?: Partial<AgentState>, shouldSave = true
 			}
 
 			renderApp();
+
+			// After agent_end, isStreaming becomes false only after all listeners settle.
+			// Wait for the agent to idle so the stable message list is shown correctly.
+			if (event.type === "agent_end") {
+				agent.waitForIdle().then(() => {
+					chatPanel.agentInterface?.requestUpdate();
+					renderApp();
+				});
+			}
 		});
 	}
 
