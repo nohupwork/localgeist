@@ -68,7 +68,7 @@ const copyStatic = () => {
 	// Copy all files from static/ directory (except manifest files)
 	const staticFiles = getStaticFiles();
 	for (const relative of staticFiles) {
-		const filename = relative.replace("static/", "");
+		const filename = relative.replace(/^static[/\\]/, "");
 		// Skip manifest files - we already copied the correct one above
 		if (filename.startsWith("manifest.")) continue;
 

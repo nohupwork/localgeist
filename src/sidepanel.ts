@@ -409,7 +409,7 @@ const createAgent = async (initialState?: Partial<AgentState>, shouldSave = true
 			// Check custom/local providers - any custom provider match returns empty string (no key needed)
 			// TODO: Custom provider keys not found correctly, requires dummy API key workaround (see known-issues.md)
 			const customProviders = await storage.customProviders.getAll();
-			const custom = customProviders.find(p => p.name === provider);
+			const custom = customProviders.find((p) => p.name === provider);
 			if (custom) {
 				return custom.apiKey || "";
 			}
@@ -479,7 +479,7 @@ const createAgent = async (initialState?: Partial<AgentState>, shouldSave = true
 		onApiKeyRequired: async (provider: string) => {
 			// Check if this is a custom/local provider (no API key needed)
 			const customProviders = await storage.customProviders.getAll();
-			const isCustom = customProviders.some(p => p.name === provider || p.baseUrl === provider);
+			const isCustom = customProviders.some((p) => p.name === provider || p.baseUrl === provider);
 			if (isCustom) {
 				return true; // Custom providers don't need API keys
 			}
@@ -1021,5 +1021,15 @@ async function initApp() {
 
 // Register custom user message renderer early, before any session loads
 registerUserMessageRenderer();
+
+// Re-render when the sidebar becomes visible again after being hidden.
+// Chrome throttles rendering in hidden extension panels, so in-flight responses
+// may finish without being painted. Forcing a refresh on visibility restores them.
+document.addEventListener("visibilitychange", () => {
+	if (document.visibilityState === "visible") {
+		renderApp();
+		chatPanel?.agentInterface?.requestUpdate();
+	}
+});
 
 initApp();
