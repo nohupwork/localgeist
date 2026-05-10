@@ -1,15 +1,5 @@
 # Known Issues
 
-## Navigation Tool `prepareArguments` Breaks Normal Use
-
-**Symptom:** "Invalid navigation parameters" on every navigation attempt, causing the LLM to loop through failed attempts.
-
-**Cause:** `prepareArguments` transformation in navigate tool was wrapping correct `{ url: "..." }` into incorrect `{ navigate: { url: "..." } }`.
-
-**Fix:** Removed broken `prepareArguments` from navigate tool (`3115f65`).
-
-**Status:** Fixed and verified.
-
 ## Model Selection Resets on New Chat
 
 **Symptom:** Starting a new chat resets the model selector, opening the Settings page with provider options instead of restoring the previously selected local model.
