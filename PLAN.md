@@ -31,6 +31,7 @@ localgeist is a local-first fork of [Sitegeist](https://github.com/badlogic/site
 - Migrated to `agent.steer()` for navigation messages
 - Session list delete confirmation, keyboard shortcut fix, tutorial pill title update
 - Renamed project to localgeist (all references, UI, manifests, code, docs)
+- Archived `site/` directory (marketing site no longer needed)
 
 ## Archive site/
 
@@ -46,22 +47,6 @@ The `site/` directory (marketing site) is no longer needed. Project will be host
 - Remove site references from `package.json` `dev` script
 - Remove `site/dist/` from `.gitignore`
 - Update `AGENTS.md` project structure if referenced
-
-## Known Issues
-
-### Model Selection Resets on New Chat
-
-**Symptom:** Starting a new chat resets the model selector, opening the Settings page with provider options instead of restoring the previously selected local model.
-
-**Suspected cause:** `lastUsedModel` persistence may be affected by the settings store migration. Custom providers may not be loaded when model is restored.
-
-**Reproduction:** Select a local provider model, start a new chat → Settings page opens.
-
-### Cloud Providers List Too Long
-
-**Symptom:** The model selector shows a long list of cloud providers (Anthropic, OpenAI, Google, Groq, OpenRouter, Vercel, Cerebras, xAI, Z-AI, etc.).
-
-**Status:** Documented for later cleanup. Consider shortening, hiding, or removing cloud providers since local models are the primary use case.
 
 ## Prioritize Local Models in UI
 
@@ -79,14 +64,6 @@ Make local/custom providers the default and primary focus of the extension.
 - May require wrapping or extending pi-web-ui's `ModelSelector` component
 - Related to "Cloud Providers List Too Long" known issue
 
-### Context Size Shows Default Values
-
-**Symptom:** llama.cpp models show "8k/4k" for context/max tokens instead of actual values (e.g., 262k for Qwen3.6-27B).
-
-**Cause:** pi-web-ui's `discoverLlamaCppModels()` only checks `model.context_length` which is not present in llama.cpp's `/v1/models` response. The actual value is in `meta.n_ctx_train`.
-
-**Status:** Upstream pi-web-ui bug. Not fixable in localgeist without modifying `../pi`.
-
 ## Deferred
 
 ### REPL Safeguards
@@ -101,7 +78,7 @@ Make local/custom providers the default and primary focus of the extension.
 
 The hja branch includes a Promise constructor wrapper that makes every `await` a cancellation checkpoint. This was removed because it broke `new Promise()` in page contexts. Re-implementing with a safer approach (namespaced wrapper, or restoring original Promise more carefully) would make cancellation automatic rather than requiring explicit `__localgeist_yield()` calls.
 
-See `SCRIPT_CANCELLATION.md` for detailed analysis.
+See `archive/SCRIPT_CANCELLATION.md` for detailed analysis.
 
 ### `executionMode` on Tools
 

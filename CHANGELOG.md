@@ -6,28 +6,6 @@
 
 - Migrated pi dependencies from `@mariozechner/pi-*` (pi-mono) to `@earendil-works/pi-*` (pi). Requires `../pi` sibling repo.
 
-### Removed
-
-- All deployment infrastructure: `publish.sh`, `release.sh`, `.github/workflows/build.yml`, external server references
-- Update check mechanism and `UpdateNotificationDialog`
-- `ApiKeyOrOAuthDialog`, `ApiKeysOAuthTab` (moved to `archive/`)
-- Dead types: `ContinueMessage`, `custom-messages.ts`, `appendAgentMessage` helper
-- Debug logging from `getApiKey()`
-
-### Changed
-
-- Renamed project to localgeist (all references, UI, manifests, code)
-- `@tailwindcss/cli` upgraded from `^4.0.0-beta.14` to `^4.2.0` (stable release)
-- `AboutTab` replaced with minimal placeholder
-- Replaced `@sinclair/typebox` 0.34.x with `typebox` 1.x
-- Standardized tool `execute()` return types to `AgentToolResult<T>`
-- Added timestamps to `NavigationMessage`, matching other message types
-- Migrated `debuggerMode` and `showJsonMode` from `chrome.storage.local` to settings store
-- Replaced esbuild `external` with alias shim for `node:*` builtins
-- Live-reload script guarded to dev builds only
-- Navigation messages use `agent.steer()` instead of direct `state.messages.push()`
-- Post-agent-end re-render uses `waitForIdle()` to prevent blank screen
-
 ### Added
 
 - Gmail automation skill: 15 functions for composing, reading, replying, searching, and managing emails on `mail.google.com`
@@ -44,6 +22,20 @@
 - `known-issues.md` tracking active bugs
 - `SCRIPT_CANCELLATION.md` documenting cooperative cancellation approach
 
+### Changed
+
+- Renamed project to localgeist (all references, UI, manifests, code)
+- `@tailwindcss/cli` upgraded from `^4.0.0-beta.14` to `^4.2.0` (stable release)
+- `AboutTab` replaced with minimal placeholder
+- Replaced `@sinclair/typebox` 0.34.x with `typebox` 1.x
+- Standardized tool `execute()` return types to `AgentToolResult<T>`
+- Added timestamps to `NavigationMessage`, matching other message types
+- Migrated `debuggerMode` and `showJsonMode` from `chrome.storage.local` to settings store
+- Replaced esbuild `external` with alias shim for `node:*` builtins
+- Live-reload script guarded to dev builds only
+- Navigation messages use `agent.steer()` instead of direct `state.messages.push()`
+- Post-agent-end re-render uses `waitForIdle()` to prevent blank screen
+
 ### Fixed
 
 - 83 TypeScript errors: Agent API method replacements (`setModel`, `appendMessage`, `replaceMessages`), added `onUpdate` to tool `execute` methods
@@ -55,6 +47,14 @@
 - Removed broken Promise constructor wrapping from browserjs()
 - Post-agent-end blank screen (edgyarmati fix)
 - Visibility re-render when sidepanel becomes visible (Chrome throttling)
+
+### Removed
+
+- All deployment infrastructure: `publish.sh`, `release.sh`, `.github/workflows/build.yml`, external server references
+- Update check mechanism and `UpdateNotificationDialog`
+- `ApiKeyOrOAuthDialog`, `ApiKeysOAuthTab` (moved to `archive/`)
+- Dead types: `ContinueMessage`, `custom-messages.ts`, `appendAgentMessage` helper
+- Debug logging from `getApiKey()`
 
 ## [1.0.0] - 2026-03-15
 
