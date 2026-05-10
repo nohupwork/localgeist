@@ -1,12 +1,14 @@
-# Localgeist — Project Plan
+# localgeist — Project Plan
 
 ## Overview
 
-Localgeist is a local-first fork of [Sitegeist](https://github.com/badlogic/sitegeist). All cloud API integrations have been stripped. The extension works with locally running LLM models (llama.cpp, Ollama, LM Studio, vLLM) via custom providers.
+localgeist is a local-first fork of [Sitegeist](https://github.com/badlogic/sitegeist). All cloud API integrations have been stripped. The extension works with locally running LLM models (llama.cpp, Ollama, LM Studio, vLLM) via custom providers.
+
+**Naming:** The project name is `localgeist` (all lowercase) in documentation, UI text, and filenames. Capitalized forms (`Localgeist`) only appear where code convention requires it (class names, function names).
 
 ## Completed
 
-- Fork comparison & merge from 8 forks into Localgeist
+- Fork comparison & merge from 8 forks into localgeist
 - `pi-mono` → `pi` dependency migration (`@earendil-works/pi-*` packages)
 - All cloud integrations stripped (OAuth, API key dialogs, update checks, deployment code)
 - Local model support via custom providers (Ollama, llama.cpp, vLLM, LM Studio)
@@ -44,14 +46,14 @@ The `site/` directory (marketing site) is no longer needed. Project will be host
 - Remove `site/dist/` from `.gitignore`
 - Update `AGENTS.md` project structure if referenced
 
-## Rename Sitegeist → Localgeist
+## Rename sitegeist → localgeist
 
 ~99 references remain across `src/`. Scope:
 
 **Must change (user-facing):**
-- System prompt: `You are Sitegeist, not Claude` → `You are Localgeist, not Claude`
-- Welcome dialog: `Welcome to Sitegeist` → `Welcome to Localgeist`
-- Manifest name: `sitegeist` → `Localgeist`
+- System prompt: `You are Sitegeist, not Claude` → `You are localgeist, not Claude`
+- Welcome dialog: `Welcome to Sitegeist` → `Welcome to localgeist`
+- Manifest name: `sitegeist` → `localgeist`
 - Download filenames: `sitegeist-skills-*`, `sitegeist-sessions-*` → `localgeist-*`
 - Custom element names: `sitegeist-user-message`, `sitegeist-session-list-dialog` → `localgeist-*`
 - OAuth originator parameter
@@ -90,7 +92,7 @@ The `site/` directory (marketing site) is no longer needed. Project will be host
 
 **Cause:** pi-web-ui's `discoverLlamaCppModels()` only checks `model.context_length` which is not present in llama.cpp's `/v1/models` response. The actual value is in `meta.n_ctx_train`.
 
-**Status:** Upstream pi-web-ui bug. Not fixable in Localgeist without modifying `../pi`.
+**Status:** Upstream pi-web-ui bug. Not fixable in localgeist without modifying `../pi`.
 
 ## Deferred
 
@@ -116,7 +118,7 @@ See `DEFERRED.md` for details.
 
 ## Tutorial Pills → Skills Integration
 
-**Future plan:** Link tutorial pills to skills — pills should trigger saved skills rather than ad-hoc prompts. This will be a Localgeist-specific feature.
+**Future plan:** Link tutorial pills to skills — pills should trigger saved skills rather than ad-hoc prompts. This will be a localgeist-specific feature.
 
 ## CORS Proxy Notes
 
