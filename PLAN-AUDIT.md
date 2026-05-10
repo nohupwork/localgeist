@@ -35,20 +35,16 @@ All tools now use explicit `AgentToolResult<T>` return types and `AgentToolUpdat
 
 ## Audit Areas
 
-### 2. Direct `state.messages` assignment
+### 2. Direct `state.messages` assignment — REVIEWED, no change needed
 
-**Issue:** `state.messages` is assigned directly in 2 places. This bypasses any validation or reactivity the Agent might provide.
+**Two usage patterns, both correct:**
 
-**Locations:**
+| File | Purpose |
+|---|---|
+| `WelcomeMessage.ts` | Filter out welcome message, replace array (removal) |
+| `sidepanel.ts` | Shallow copy reassignment (reactivity trigger for UI re-render) |
 
-| File | Line | Pattern |
-|---|---|---|
-| `WelcomeMessage.ts` | 58 | `this.agent.state.messages = messages;` |
-| `sidepanel.ts` | 368 | `targetAgent.state.messages = targetAgent.state.messages.slice();` |
-
-**Current API:** `agent.steer(msg)` for steering messages, `agent.followUp(msg)` for follow-ups. Direct assignment is used for session loading/reloading which is a bulk operation — `steer()`/`followUp()` are for individual messages.
-
-**Risk:** Low — bulk assignment during session restore is likely the intended pattern. Verify with pi/ source.
+`steer()` and `followUp()` are add-only. No `removeMessage()` exists. The `state.messages` setter is the only bulk write API, designed for this (`nextMessages.slice()` on set).
 
 ---
 
@@ -224,11 +220,11 @@ grep -rn "terminate" src/tools/ --include="*.ts"
 | Priority | Area | Reason |
 |---|---|---|
 | **Done** | #1 Tool return types | Fixed (892b40b) |
+| **Done** | #2 state.messages assignment | Reviewed, correct usage |
 | **Done** | #3 chrome.storage.local | Fixed (780f192) |
 | **Done** | #4 Subscribe typing | Fixed (892b40b) |
-| **Done** | #10 Message transformer | Reviewed. Fixed timestamp (f63b50e). TBD: dead `continue` type |
+| **Done** | #10 Message transformer | Reviewed. Fixed timestamp (f63b50e). Removed dead `continue` type |
 | **Done** | #11 Custom provider handling | Fixed (3bd74ab, 336974a, 2705ee9) |
-| **Low** | #2 state.messages assignment | Bulk operation, likely correct |
 | **Low** | #5 as any casts | Accepted limitation |
 | **Low** | #6 executionMode | Optimization, not correctness |
 | **Low** | #7 Event completeness | Irrelevant without AgentHarness |
