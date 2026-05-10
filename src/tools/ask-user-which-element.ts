@@ -56,7 +56,7 @@ export type SelectElementResult = ElementInfo;
 // Extend Window interface for our custom property
 declare global {
 	interface Window {
-		__sitegeistElementPicker?: boolean;
+		__localgeistElementPicker?: boolean;
 	}
 }
 
@@ -67,11 +67,11 @@ declare global {
  */
 async function createElementPickerOverlay(message?: string) {
 	// Prevent multiple overlays
-	if (window.__sitegeistElementPicker) {
+	if (window.__localgeistElementPicker) {
 		throw new Error("Element picker is already active");
 	}
 
-	window.__sitegeistElementPicker = true;
+	window.__localgeistElementPicker = true;
 
 	return new Promise((resolve) => {
 		// Create overlay container
@@ -454,7 +454,7 @@ async function createElementPickerOverlay(message?: string) {
 			window.removeEventListener("sitegeist-element-cancel", handleCancel);
 			overlay.remove();
 			banner.remove();
-			delete window.__sitegeistElementPicker;
+			delete window.__localgeistElementPicker;
 		}
 
 		// Keyboard handler (ESC to cancel, Arrow keys to change depth)

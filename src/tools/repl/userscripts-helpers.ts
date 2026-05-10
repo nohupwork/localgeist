@@ -163,13 +163,13 @@ async function wrapperIIFE() {
 	("__INJECT_PROVIDERS_HERE__");
 
 	// Inject cancellation flag for cooperative cancellation
-	(window as any).__sitegeist_cancelled = false;
+	(window as any).__localgeist_cancelled = false;
 
 	// Inject yield helper for explicit cancellation points (useful for tight loops)
-	(window as any).__sitegeist_yield = () => {
+	(window as any).__localgeist_yield = () => {
 		return new Promise<void>((resolve, reject) => {
 			setTimeout(() => {
-				if ((window as any).__sitegeist_cancelled) {
+				if ((window as any).__localgeist_cancelled) {
 					reject(new Error("Script execution was cancelled"));
 				} else {
 					resolve();
@@ -180,8 +180,8 @@ async function wrapperIIFE() {
 
 	const cleanup = () => {
 		if (timeoutId) clearTimeout(timeoutId);
-		delete (window as any).__sitegeist_yield;
-		delete (window as any).__sitegeist_cancelled;
+		delete (window as any).__localgeist_yield;
+		delete (window as any).__localgeist_cancelled;
 		// Runtime provider cleanup will be handled automatically
 	};
 

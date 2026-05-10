@@ -33,6 +33,8 @@ Injected into page contexts. Simple string replacements, no imports affected.
 
 **Note:** No references in `default-skills.ts` (verified).
 
+**Status:** DONE. `npm run check` and `npm run build` pass. Zero `__sitegeist` / `sitegeistElementPicker` references remain in affected files.
+
 ## Phase 0b: World IDs & Element Picker (userScripts)
 
 Internal identifiers for `chrome.userScripts` and DOM elements. Must be consistent across files or injection fails silently.
@@ -222,12 +224,103 @@ Class/function renames and import updates. TypeScript catches broken imports; cu
 - `Sitegeist icon` → `localgeist icon`
 
 **File:** `CHANGELOG.md`
-- Add entry under `## [Unreleased]` → `### Changed`: `Renamed project to localgeist (all references, UI, manifests, code)`
-- Do not modify historical entries
+- Remove stale entry from `### Breaking Changes`: `Renamed project from Sitegeist to Localgeist. All references updated.` (written before rename was executed)
+- Add entry under `### Changed`: `Renamed project to localgeist (all references, UI, manifests, code)`
+- Update `### Added` entry: `__sitegeist_yield()` → `__localgeist_yield()` (describes current helper name)
+- Do not modify `[1.0.0]` or any released version sections
 
 **File:** `PLAN.md`
-- Update project name references where appropriate
-- Keep fork context references to original Sitegeist
+- Move "Rename sitegeist → localgeist" section (lines 49-69) to "Completed" section
+- Deferred "Promise Wrapping" section: `__sitegeist_yield()` → `__localgeist_yield()` (describes current helper name)
+- **Keep:** `localgeist is a local-first fork of [Sitegeist]` (fork context, title line)
+- **Keep:** All other fork-context references to original Sitegeist
+
+**File:** `AGENTS.md`
+- `sitegeist/    (this project)` → `localgeist/    (this project)`
+- `cd ../sitegeist` → `cd ../localgeist`
+- **Keep:** `Localgeist is a local-first fork of [Sitegeist]` (fork context)
+- **Keep:** `archive/  # Archived original files from upstream Sitegeist` (fork context)
+
+## Phase 5b: Technical Docs
+
+Documentation in `docs/` and build scripts. Code examples and paths must reflect renamed classes, functions, and database.
+
+**File:** `docs/storage.md`
+- `Sitegeist uses a unified...` → `localgeist uses a unified...` (intro paragraph)
+- `...and extended in Sitegeist with additional stores...` → `...and extended in localgeist...`
+- `Single IndexedDB database sitegeist-storage` → `localgeist-storage` (2 references)
+- `dbName: 'sitegeist-storage'` → `'localgeist-storage'` (code example)
+- `Extension stores (Sitegeist-specific)` → `(localgeist-specific)`
+- `## Extension Stores (Sitegeist)` → `## Extension Stores (localgeist)`
+- `### SitegeistAppStorage (extension)` → `### LocalgeistAppStorage (extension)`
+- `Extends base storage with Sitegeist-specific stores.` → `...localgeist-specific...`
+- `const storage = getSitegeistStorage()` → `getLocalgeistStorage()` (code example)
+- `IndexedDB → sitegeist-storage` → `localgeist-storage`
+- `### Extension Storage (sitegeist)` → `(localgeist)`
+- `app-storage.ts - SitegeistAppStorage` → `LocalgeistAppStorage`
+
+**File:** `docs/settings.md`
+- `Sitegeist uses a key-value...` → `localgeist uses a key-value...`
+- `import { getSitegeistStorage }` → `import { getLocalgeistStorage }` (code example)
+- `const storage = getSitegeistStorage()` → `getLocalgeistStorage()` (code example)
+- `Database: sitegeist-storage` → `localgeist-storage`
+
+**File:** `docs/i18n.md`
+- `Sitegeist uses the mini-lit...` → `localgeist uses the mini-lit...`
+- `Sitegeist - Extension-specific translations` → `localgeist - Extension-specific translations`
+- `Import i18n-extension.js - Required for Sitegeist keys` → `...localgeist keys`
+- `Required for Sitegeist translations` → `...localgeist translations` (2 references)
+- `IMPORTANT: Always import... Sitegeist-specific translation keys` → `...localgeist-specific...`
+- `sitegeistTranslations.en` → `localgeistTranslations.en` (code examples, 2 references)
+- `sitegeistTranslations.de` → `localgeistTranslations.de` (code examples, 2 references)
+- `const sitegeistTranslations = {` → `const localgeistTranslations = {` (code examples, 2 references)
+- `Add the English translation to the sitegeistTranslations.en object` → `localgeistTranslations.en`
+- `Add the German translation to the sitegeistTranslations.de object` → `localgeistTranslations.de`
+- `Fix: Add the German translation to sitegeistTranslations.de` → `localgeistTranslations.de`
+- `English translations (sitegeistTranslations.en)` → `(localgeistTranslations.en)`
+- `German translations (sitegeistTranslations.de)` → `(localgeistTranslations.de)`
+
+**File:** `docs/proxy.md`
+- `Sitegeist uses a CORS Proxy` → `localgeist uses a CORS Proxy`
+- `#### Sitegeist (Extension)` → `#### localgeist (Extension)`
+- `Not used by Sitegeist` → `localgeist` (2 references)
+- `Not used by Sitegeist - Sitegeist only uses` → `localgeist - localgeist only uses`
+- `Tool has optional corsProxyUrl property set by Sitegeist` → `...by localgeist`
+- `Settings stored in IndexedDB under sitegeist-storage database` → `localgeist-storage`
+- `### Sitegeist Extension` → `### localgeist Extension`
+- `USED by Sitegeist` → `localgeist`
+- `NOT used by Sitegeist` → `localgeist` (2 references)
+
+**File:** `docs/prompts.md`
+- `### Sitegeist Prompts` → `### localgeist Prompts`
+- `Sitegeist-specific prompts:` → `localgeist-specific prompts:`
+- `Sitegeist-specific tools` → `localgeist-specific tools`
+- `Sitegeist-specific prompts` → `localgeist-specific prompts`
+- Convert absolute paths to relative (from `docs/`):
+  - `/Users/badlogic/workspaces/sitegeist/src/...` → `../src/...` (10 paths)
+  - `/Users/badlogic/workspaces/pi-mono/packages/web-ui/src/...` → `../../pi/packages/web-ui/src/...` (5 paths)
+
+**File:** `docs/custom-ui-messages.md`
+- Convert absolute paths to relative (from `docs/`):
+  - `sitegeist/src/messages/NavigationMessage.ts` → `../src/messages/NavigationMessage.ts`
+  - `sitegeist/src/messages/WelcomeMessage.ts` → `../src/messages/WelcomeMessage.ts`
+  - `sitegeist/src/message-transformer.ts` → `../src/message-transformer.ts`
+  - `sitegeist/src/sidepanel.ts` → `../src/sidepanel.ts`
+
+**File:** `docs/multi-window.md`
+- `Sitegeist implements window-scoped...` → `localgeist implements window-scoped...`
+
+**File:** `docs/skills.md`
+- `Sitegeist ships with built-in skills` → `localgeist ships with built-in skills`
+
+**File:** `docs/tool-renderers.md`
+- `sitegeist Extension:` → `localgeist Extension:`
+- `sitegeist/src/tools/` → `../src/tools/`
+
+**File:** `scripts/build.mjs`
+- `resolve to sitegeist's node_modules` → `localgeist's node_modules`
+
+**Keep:** `CREDITS.md` entirely (historical attribution, per plan rules)
 
 ## Execution Order
 

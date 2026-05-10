@@ -189,7 +189,7 @@ The function is **serialized** and executed in the page context. This means:
 - ✅ CAN use artifact/attachment functions (auto-injected in page context)
 - ✅ CAN use native input functions (nativeClick, nativeType, nativePress, etc.)
 - ✅ CAN use skills for current domain (auto-injected)
-- ✅ CAN use __sitegeist_yield() for proper cancellation in long loops
+- ✅ CAN use __localgeist_yield() for proper cancellation in long loops
 
 **What doesn't work:**
 - ❌ CANNOT access variables from REPL scope (closure doesn't work)
@@ -214,7 +214,7 @@ await browserjs(async () => {
 
     // Yield control every 50 items to allow cancellation
     if (i % 50 === 0) {
-      await __sitegeist_yield();
+      await __localgeist_yield();
     }
   }
 
@@ -232,7 +232,7 @@ await browserjs(async () => {
 
 #### Functions
 - await browserjs(func, ...args) - Execute function in page, returns JSON-serializable result
-- await __sitegeist_yield() - Create cancellation point in long operations (use inside browserjs only)
+- await __localgeist_yield() - Create cancellation point in long operations (use inside browserjs only)
 
 #### Example
 Simple extraction:
@@ -270,7 +270,7 @@ await browserjs(async () => {
     results.push(processElement(elements[i]));
 
     // Yield every 50 iterations
-    if (i % 50 === 0) await __sitegeist_yield();
+    if (i % 50 === 0) await __localgeist_yield();
   }
 
   return results;

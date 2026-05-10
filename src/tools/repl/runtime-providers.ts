@@ -219,7 +219,7 @@ export class BrowserJsRuntimeProvider implements SandboxRuntimeProvider {
 				try {
 					// Step 1: Set cooperative cancellation flag (guaranteed to work)
 					await chrome.userScripts.execute({
-						js: [{ code: "window.__sitegeist_cancelled = true;" }],
+						js: [{ code: "window.__localgeist_cancelled = true;" }],
 						target: { tabId: tab.id!, allFrames: false },
 						world: "USER_SCRIPT",
 						worldId: FIXED_WORLD_ID,
