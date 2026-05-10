@@ -445,7 +445,7 @@ const createAgent = async (initialState?: Partial<AgentState>, shouldSave = true
 			}
 			// Check custom/local providers - any custom provider match returns empty string (no key needed)
 			const customProviders = await storage.customProviders.getAll();
-			const custom = customProviders.find((p) => p.name === provider || p.baseUrl === provider);
+			const custom = customProviders.find((p) => p.name === provider || p.type === provider);
 			if (custom) {
 				// Return placeholder if no key set — local providers don't need one,
 				// but pi-ai provider implementations reject empty/falsy apiKey
@@ -535,7 +535,7 @@ const createAgent = async (initialState?: Partial<AgentState>, shouldSave = true
 		onApiKeyRequired: async (provider: string) => {
 			// Check if this is a custom/local provider (no API key needed)
 			const customProviders = await storage.customProviders.getAll();
-			const isCustom = customProviders.some((p) => p.name === provider || p.baseUrl === provider);
+			const isCustom = customProviders.some((p) => p.name === provider || p.type === provider);
 			if (isCustom) {
 				return true; // Custom providers don't need API keys
 			}
