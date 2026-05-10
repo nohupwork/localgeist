@@ -69,18 +69,6 @@ export class NavigateTool implements AgentTool<typeof navigateSchema, NavigateRe
 	description = NAVIGATE_TOOL_DESCRIPTION;
 	parameters = navigateSchema;
 
-	prepareArguments = (input: unknown): NavigateParams => {
-		if (!input || typeof input !== "object") return input as NavigateParams;
-		const args = input as Record<string, unknown>;
-		// Some models send nested navigate action flat at the top level
-		if (!("navigate" in args) && ("url" in args || "goto" in args)) {
-			args.navigate = { url: (args.url || args.goto) as string };
-			delete args.url;
-			delete args.goto;
-		}
-		return args as NavigateParams;
-	};
-
 	async execute(
 		_toolCallId: string,
 		args: NavigateParams,
