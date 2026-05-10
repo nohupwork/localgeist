@@ -1,4 +1,4 @@
-import type { AgentTool } from "@earendil-works/pi-agent-core";
+import type { AgentTool, AgentToolResult, AgentToolUpdateCallback } from "@earendil-works/pi-agent-core";
 import { StringEnum, type ToolResultMessage } from "@earendil-works/pi-ai";
 import {
 	registerToolRenderer,
@@ -68,8 +68,8 @@ CRITICAL: Use browserjs() and repl tool for DOM manipulation. Use this ONLY for 
 		_toolCallId: string,
 		args: DebuggerParams,
 		signal?: AbortSignal,
-		_onUpdate?: (result: { content: Array<{ type: "text"; text: string }>; details: DebuggerResult }) => void,
-	): Promise<{ content: Array<{ type: "text"; text: string }>; details: DebuggerResult }> {
+		_onUpdate?: AgentToolUpdateCallback<DebuggerResult>,
+	): Promise<AgentToolResult<DebuggerResult>> {
 		if (signal?.aborted) {
 			throw new Error("Debugger command aborted");
 		}

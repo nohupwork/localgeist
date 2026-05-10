@@ -1,4 +1,4 @@
-import type { AgentTool } from "@earendil-works/pi-agent-core";
+import type { AgentTool, AgentToolResult, AgentToolUpdateCallback } from "@earendil-works/pi-agent-core";
 import type { ToolResultMessage } from "@earendil-works/pi-ai";
 import {
 	type Attachment,
@@ -198,7 +198,12 @@ export function createReplTool(): AgentTool<typeof replSchema, ReplToolResult> &
 			return REPL_TOOL_DESCRIPTION(runtimeProviderDescriptions);
 		},
 		parameters: replSchema,
-		execute: async function (_toolCallId: string, args: Static<typeof replSchema>, signal?: AbortSignal) {
+		execute: async function (
+			_toolCallId: string,
+			args: Static<typeof replSchema>,
+			signal?: AbortSignal,
+			_onUpdate?: AgentToolUpdateCallback<ReplResult>,
+		): Promise<AgentToolResult<ReplResult>> {
 			const result = await executeJavaScript(
 				args.code,
 				this.runtimeProvidersFactory?.() ?? [],

@@ -1,4 +1,4 @@
-import type { AgentTool } from "@earendil-works/pi-agent-core";
+import type { AgentTool, AgentToolResult, AgentToolUpdateCallback } from "@earendil-works/pi-agent-core";
 import type { ToolResultMessage } from "@earendil-works/pi-ai";
 import {
 	registerToolRenderer,
@@ -531,8 +531,8 @@ export class AskUserWhichElementTool implements AgentTool<typeof selectElementSc
 		_toolCallId: string,
 		args: SelectElementParams,
 		signal?: AbortSignal,
-		_onUpdate?: (result: { content: Array<{ type: "text"; text: string }>; details: SelectElementResult }) => void,
-	): Promise<{ content: Array<{ type: "text"; text: string }>; details: SelectElementResult }> {
+		_onUpdate?: AgentToolUpdateCallback<SelectElementResult>,
+	): Promise<AgentToolResult<SelectElementResult>> {
 		try {
 			// Check if already aborted
 			if (signal?.aborted) {

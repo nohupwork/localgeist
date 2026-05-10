@@ -659,7 +659,7 @@ const createAgent = async (initialState?: Partial<AgentState>, shouldSave = true
 
 			// Re-enable auto-scroll on first user message
 			let unsubscribe: (() => void) | undefined;
-			unsubscribe = agent.subscribe(() => {
+			unsubscribe = agent.subscribe((_event: AgentEvent) => {
 				const hasUserMsg = agent.state.messages.some((m) => m.role === "user");
 				if (hasUserMsg && unsubscribe) {
 					chatPanel.agentInterface?.setAutoScroll(true);

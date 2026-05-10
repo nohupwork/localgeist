@@ -1,4 +1,4 @@
-import type { AgentTool } from "@earendil-works/pi-agent-core";
+import type { AgentTool, AgentToolResult, AgentToolUpdateCallback } from "@earendil-works/pi-agent-core";
 import type { ToolResultMessage } from "@earendil-works/pi-ai";
 import { registerToolRenderer, type ToolRenderer, type ToolRenderResult } from "@earendil-works/pi-web-ui";
 import { i18n, icon } from "@mariozechner/mini-lit";
@@ -73,8 +73,8 @@ export class NavigateTool implements AgentTool<typeof navigateSchema, NavigateRe
 		_toolCallId: string,
 		args: NavigateParams,
 		signal?: AbortSignal,
-		_onUpdate?: (result: { content: Array<{ type: "text"; text: string }>; details: NavigateResult }) => void,
-	): Promise<{ content: Array<{ type: "text"; text: string }>; details: NavigateResult }> {
+		_onUpdate?: AgentToolUpdateCallback<NavigateResult>,
+	): Promise<AgentToolResult<NavigateResult>> {
 		if (signal?.aborted) {
 			throw new Error("Navigation aborted");
 		}

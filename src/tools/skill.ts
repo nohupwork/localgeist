@@ -1,5 +1,5 @@
 import "@mariozechner/mini-lit/dist/MarkdownBlock.js";
-import type { AgentTool } from "@earendil-works/pi-agent-core";
+import type { AgentTool, AgentToolResult, AgentToolUpdateCallback } from "@earendil-works/pi-agent-core";
 import { StringEnum, type ToolResultMessage } from "@earendil-works/pi-ai";
 import {
 	registerToolRenderer,
@@ -200,7 +200,12 @@ export const skillTool: AgentTool<typeof skillParamsSchema, any> = {
 	name: "skill",
 	description: SKILL_TOOL_DESCRIPTION,
 	parameters: skillParamsSchema,
-	execute: async (_toolCallId: string, args: SkillParams, _signal?: AbortSignal, _onUpdate?: any) => {
+	execute: async (
+		_toolCallId: string,
+		args: SkillParams,
+		_signal?: AbortSignal,
+		_onUpdate?: AgentToolUpdateCallback<SkillResultDetails>,
+	): Promise<AgentToolResult<SkillResultDetails>> => {
 		const skillsRepo = getSkills();
 		const [tab] = await chrome.tabs.query({
 			active: true,
