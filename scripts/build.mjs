@@ -43,18 +43,11 @@ const buildOptions = {
 		global: "globalThis",
 	},
 	inject: [join(packageRoot, "scripts/process-shim.js")],
-	// Mark Node.js builtins as external — pi-agent-core bundles server-side code
-	// (session storage, shell utils) that is never executed in the browser
-	external: [
-		"node:fs",
-		"node:fs/promises",
-		"node:crypto",
-		"node:child_process",
-		"node:path",
-		"node:os",
-		"node:readline",
-	],
 	// Force all mini-lit and lit imports to resolve to sitegeist's node_modules
+	// Node.js builtins are aliased to an empty shim — pi-agent-core bundles
+	// server-side code (session storage, shell utils) that is never executed
+	// in the browser. Using alias (not external) so esbuild replaces the import
+	// instead of leaving a bare "node:*" specifier that violates Chrome CSP.
 	alias: {
 		process: join(packageRoot, "scripts/process-shim.js"),
 		"@mariozechner/mini-lit": join(packageRoot, "node_modules/@mariozechner/mini-lit"),
@@ -62,6 +55,13 @@ const buildOptions = {
 		"lit/decorators.js": join(packageRoot, "node_modules/lit/decorators.js"),
 		"lit/directives/class-map.js": join(packageRoot, "node_modules/lit/directives/class-map.js"),
 		"lit/directives/unsafe-html.js": join(packageRoot, "node_modules/lit/directives/unsafe-html.js"),
+		"node:fs": join(packageRoot, "scripts/node-shim.js"),
+		"node:fs/promises": join(packageRoot, "scripts/node-shim.js"),
+		"node:crypto": join(packageRoot, "scripts/node-shim.js"),
+		"node:child_process": join(packageRoot, "scripts/node-shim.js"),
+		"node:path": join(packageRoot, "scripts/node-shim.js"),
+		"node:os": join(packageRoot, "scripts/node-shim.js"),
+		"node:readline": join(packageRoot, "scripts/node-shim.js"),
 	},
 };
 
