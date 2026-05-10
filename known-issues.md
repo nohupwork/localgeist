@@ -8,7 +8,7 @@
 
 **Fix:** Removed broken `prepareArguments` from navigate tool (`3115f65`).
 
-**Status:** Fixed, awaiting user verification.
+**Status:** Fixed and verified.
 
 ## Model Selection Resets on New Chat
 
