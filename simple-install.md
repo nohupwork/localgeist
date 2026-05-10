@@ -4,10 +4,10 @@
 
 1. Open Chromium, go to `chrome://extensions/`
 2. Enable **Developer mode** (toggle, top-right)
-3. **Remove** any existing Sitegeist installation first
+3. **Remove** any existing localgeist installation first
 4. Click **Load unpacked**
 5. Select `dist-chrome/`
-6. Click **Details** on the Sitegeist card
+6. Click **Details** on the localgeist card
 7. Enable **Allow user scripts**
 8. Enable **Allow access to file URLs** (optional)
 9. Pin the extension to toolbar (puzzle icon, then pin)
@@ -15,13 +15,13 @@
 
 ## Troubleshooting
 
-- If settings gear does nothing, check `chrome://extensions/` for errors on Sitegeist
+- If settings gear does nothing, check `chrome://extensions/` for errors on localgeist
 - Click "Details" on the extension -> "Service worker" errors or "Inspect views: sidepanel"
-- Clear extension storage: `chrome://extensions/` -> Sitegeist Details -> "Clear storage"
+- Clear extension storage: `chrome://extensions/` -> localgeist Details -> "Clear storage"
 
 ## First Run
 
-11. Click the Sitegeist icon to open sidepanel
+11. Click the localgeist icon to open sidepanel
 12. Click the **gear icon** (Settings) or "Set up provider"
 13. In Settings -> select **llama.cpp** -> URL pre-fills to `http://localhost:8080`
 14. Click **Discover models** -> pick a model -> start chatting

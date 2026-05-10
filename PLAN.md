@@ -30,6 +30,7 @@ localgeist is a local-first fork of [Sitegeist](https://github.com/badlogic/site
 - Attachment handling in message transformer
 - Migrated to `agent.steer()` for navigation messages
 - Session list delete confirmation, keyboard shortcut fix, tutorial pill title update
+- Renamed project to localgeist (all references, UI, manifests, code, docs)
 
 ## Archive site/
 
@@ -45,30 +46,6 @@ The `site/` directory (marketing site) is no longer needed. Project will be host
 - Remove site references from `package.json` `dev` script
 - Remove `site/dist/` from `.gitignore`
 - Update `AGENTS.md` project structure if referenced
-
-## Rename sitegeist → localgeist
-
-~99 references remain across `src/`. Scope:
-
-**Must change (user-facing):**
-- System prompt: `You are Sitegeist, not Claude` → `You are localgeist, not Claude`
-- Welcome dialog: `Welcome to Sitegeist` → `Welcome to localgeist`
-- Manifest name: `sitegeist` → `localgeist`
-- Download filenames: `sitegeist-skills-*`, `sitegeist-sessions-*` → `localgeist-*`
-- Custom element names: `sitegeist-user-message`, `sitegeist-session-list-dialog` → `localgeist-*`
-- OAuth originator parameter
-
-**Should change (internal consistency):**
-- Class names: `SitegeistAppStorage` → `LocalgeistAppStorage`, `SitegeistSessionsStore` → `LocalgeistSessionsStore`, `SitegeistUserMessage` → `LocalgeistUserMessage`, `SitegeistSessionListDialog` → `LocalgeistSessionListDialog`
-- Function names: `getSitegeistStorage()` → `getLocalgeistStorage()`
-- Code comments referencing "Sitegeist"
-
-**Keep as-is:**
-- `__sitegeist_yield()`, `__sitegeist_cancelled` — injected into page contexts, changing breaks existing scripts
-- Database name `sitegeist-storage` — changing breaks existing user data
-- References to original Sitegeist project in documentation/fork context
-
-**Care required:** i18n-extension.ts has translation keys that may reference upstream pi-web-ui elements. Verify before changing.
 
 ## Known Issues
 
@@ -122,7 +99,7 @@ Make local/custom providers the default and primary focus of the extension.
 
 ### Promise Wrapping for Script Cancellation
 
-The hja branch includes a Promise constructor wrapper that makes every `await` a cancellation checkpoint. This was removed because it broke `new Promise()` in page contexts. Re-implementing with a safer approach (namespaced wrapper, or restoring original Promise more carefully) would make cancellation automatic rather than requiring explicit `__sitegeist_yield()` calls.
+The hja branch includes a Promise constructor wrapper that makes every `await` a cancellation checkpoint. This was removed because it broke `new Promise()` in page contexts. Re-implementing with a safer approach (namespaced wrapper, or restoring original Promise more carefully) would make cancellation automatic rather than requiring explicit `__localgeist_yield()` calls.
 
 See `SCRIPT_CANCELLATION.md` for detailed analysis.
 

@@ -4,7 +4,6 @@
 
 ### Breaking Changes
 
-- Renamed project from Sitegeist to Localgeist. All references updated.
 - Migrated pi dependencies from `@mariozechner/pi-*` (pi-mono) to `@earendil-works/pi-*` (pi). Requires `../pi` sibling repo.
 
 ### Removed
@@ -17,6 +16,7 @@
 
 ### Changed
 
+- Renamed project to localgeist (all references, UI, manifests, code)
 - `@tailwindcss/cli` upgraded from `^4.0.0-beta.14` to `^4.2.0` (stable release)
 - `AboutTab` replaced with minimal placeholder
 - Replaced `@sinclair/typebox` 0.34.x with `typebox` 1.x
@@ -32,7 +32,7 @@
 
 - Gmail automation skill: 15 functions for composing, reading, replying, searching, and managing emails on `mail.google.com`
 - Local model support: `ProvidersModelsTab` from pi-web-ui — Ollama, llama.cpp, vLLM, LM Studio discovery
-- Hybrid script cancellation for `browserjs()` — `__sitegeist_yield()` helper + V8 `terminate()` backup, 30s timeout
+- Hybrid script cancellation for `browserjs()` — `__localgeist_yield()` helper + V8 `terminate()` backup, 30s timeout
 - `prepareArguments()` on all tools for model-specific argument normalization
 - In-page session switching (no reload) with session lock management
 - Init error boundary with `showError()` fallback UI

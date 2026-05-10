@@ -63,7 +63,7 @@ Requires sibling repos:
 parent/
   mini-lit/
   pi/
-  sitegeist/    (this project)
+  localgeist/    (this project)
 ```
 
 ### First-time setup
@@ -71,7 +71,7 @@ parent/
 ```bash
 cd ../mini-lit  && npm install && npm run build
 cd ../pi       && npm install && npm run build
-cd ../sitegeist && npm install && npm run build
+cd ../localgeist && npm install && npm run build
 ```
 
 ### Day-to-day

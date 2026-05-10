@@ -246,6 +246,8 @@ Class/function renames and import updates. TypeScript catches broken imports; cu
 - **Keep:** `Localgeist is a local-first fork of [Sitegeist]` (fork context)
 - **Keep:** `archive/  # Archived original files from upstream Sitegeist` (fork context)
 
+**Status:** DONE. `npm run check` and `npm run build` pass. All non-fork-context references updated.
+
 ## Phase 5b: Technical Docs
 
 Documentation in `docs/` and build scripts. Code examples and paths must reflect renamed classes, functions, and database.
