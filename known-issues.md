@@ -12,20 +12,6 @@
 
 ---
 
-## Chat Output Flashes Then Collapses
-
-**Symptom:** After the model finishes responding, the output text flashes, then collapses. Only the thinking block remains visible. The actual response text is only visible after navigating away and back to the conversation (via the history tab).
-
-**Steps to reproduce:**
-1. Start a new conversation
-2. Send a message
-3. Wait for the model to finish responding
-4. Observe: output flashes, then collapses to just the thinking block
-
-**Workaround:** Navigate to the conversation history tab, click on the conversation to reload it. The full response text will be visible.
-
-**Status:** Deal-breaking UI bug. Likely a Lit rendering timing issue with thinking/content blocks in the chat panel. Needs investigation in `pi-web-ui` or `sitegeist` chat rendering code.
-
 ## Cloud Providers List Too Long
 
 **Symptom:** The model selector shows a long list of cloud providers (Anthropic, OpenAI, Google, Groq, OpenRouter, Vercel, Cerebras, xAI, Z-AI, etc.).
