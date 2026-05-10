@@ -200,6 +200,20 @@ export const skillTool: AgentTool<typeof skillParamsSchema, any> = {
 	name: "skill",
 	description: SKILL_TOOL_DESCRIPTION,
 	parameters: skillParamsSchema,
+	prepareArguments: (input: unknown): SkillParams => {
+		if (!input || typeof input !== "object") return input as SkillParams;
+		const args = input as Record<string, unknown>;
+		// Some models send action as a full description instead of enum value
+		if (typeof args.action === "string") {
+			const action = args.action.toLowerCase();
+			if (action.includes("get") || action.includes("fetch") || action.includes("load")) args.action = "get";
+			else if (action.includes("list") || action.includes("available") || action.includes("all"))
+				args.action = "list";
+			else if (action.includes("execute") || action.includes("run") || action.includes("use"))
+				args.action = "execute";
+		}
+		return args as SkillParams;
+	},
 	execute: async (
 		_toolCallId: string,
 		args: SkillParams,

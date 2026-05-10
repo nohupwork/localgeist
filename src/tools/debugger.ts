@@ -64,6 +64,22 @@ ACTIONS:
 CRITICAL: Use browserjs() and repl tool for DOM manipulation. Use this ONLY for MAIN world access or browser APIs.`;
 	parameters = debuggerSchema;
 
+	prepareArguments = (input: unknown): DebuggerParams => {
+		if (!input || typeof input !== "object") return input as DebuggerParams;
+		const args = input as Record<string, unknown>;
+		// Some models send action as a full description instead of enum value
+		if (typeof args.action === "string") {
+			const action = args.action.toLowerCase();
+			if (action.includes("tab") && action.includes("list")) args.action = "listTabs";
+			else if (action.includes("cookie")) args.action = "cookies";
+			else if (action.includes("storage") || action.includes("local")) args.action = "localStorage";
+			else if (action.includes("console") || action.includes("log")) args.action = "consoleLogs";
+			else if (action.includes("network") || action.includes("request")) args.action = "networkRequests";
+			else if (action.includes("dom") || action.includes("element")) args.action = "domInfo";
+		}
+		return args as DebuggerParams;
+	};
+
 	async execute(
 		_toolCallId: string,
 		args: DebuggerParams,

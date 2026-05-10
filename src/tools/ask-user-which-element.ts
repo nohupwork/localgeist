@@ -527,6 +527,19 @@ export class AskUserWhichElementTool implements AgentTool<typeof selectElementSc
 	description = ASK_USER_WHICH_ELEMENT_TOOL_DESCRIPTION;
 	parameters = selectElementSchema;
 
+	prepareArguments = (input: unknown): SelectElementParams => {
+		if (!input || typeof input !== "object") return input as SelectElementParams;
+		const args = input as Record<string, unknown>;
+		// Some models send description as a nested object or array
+		if (Array.isArray(args.description)) {
+			args.description = args.description.join(" ");
+		}
+		if (typeof args.description === "object" && args.description !== null) {
+			args.description = JSON.stringify(args.description);
+		}
+		return args as SelectElementParams;
+	};
+
 	async execute(
 		_toolCallId: string,
 		args: SelectElementParams,

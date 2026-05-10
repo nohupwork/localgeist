@@ -198,6 +198,15 @@ export function createReplTool(): AgentTool<typeof replSchema, ReplToolResult> &
 			return REPL_TOOL_DESCRIPTION(runtimeProviderDescriptions);
 		},
 		parameters: replSchema,
+		prepareArguments: (input: unknown): Static<typeof replSchema> => {
+			if (!input || typeof input !== "object") return input as Static<typeof replSchema>;
+			const args = input as Record<string, unknown>;
+			// Some models send code as a nested object or with extra fields
+			if (typeof args.code === "object" && args.code !== null) {
+				args.code = JSON.stringify(args.code);
+			}
+			return args as Static<typeof replSchema>;
+		},
 		execute: async function (
 			_toolCallId: string,
 			args: Static<typeof replSchema>,

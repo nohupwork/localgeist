@@ -155,6 +155,15 @@ export class ExtractImageTool implements AgentTool<typeof extractImageSchema, Ex
 	parameters = extractImageSchema;
 	windowId?: number;
 
+	prepareArguments = (input: unknown): ExtractImageParams => {
+		if (!input || typeof input !== "object") return input as ExtractImageParams;
+		const args = input as Record<string, unknown>;
+		// Some models send mode as a string variant instead of enum
+		if (args.mode === "screenshot-page") args.mode = "screenshot";
+		if (args.mode === "screenshot-element") args.mode = "selector";
+		return args as ExtractImageParams;
+	};
+
 	async execute(
 		_toolCallId: string,
 		args: ExtractImageParams,
