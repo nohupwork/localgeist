@@ -83,9 +83,9 @@ Load `dist-chrome/` as unpacked extension in Chrome/Edge. Enable "Allow user scr
 
 ## Known Issues
 
-See `known-issues.md` for:
-- Chat output flash/collapse UI bug
-- Context size showing default values
+Location: `known-issues.md`
+
+When an issue is resolved, remove it from the file completely — do not mark it as fixed.
 
 ## CORS Proxy Notes
 
