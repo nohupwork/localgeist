@@ -40,6 +40,8 @@ Use these sections under `## [Unreleased]`:
 - New entries ALWAYS go under `## [Unreleased]`
 - Append to existing subsections, do not create duplicates
 - NEVER modify already-released version sections
+- Update `CHANGELOG.md` before committing code changes
+- Keep entries concise — commit history has full details
 
 ## Style
 - No emojis in commits, code, or comments
