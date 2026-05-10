@@ -69,6 +69,11 @@ Changes borrowed from the following forks are attributed below.
 - **Post-stream re-render** — `waitForIdle()` re-render after `agent_end` event.
   - Files: `src/sidepanel.ts`
 
+### [chrisqianz/sitegeist](https://github.com/chrisqianz/sitegeist) — branch `feature/local-model-support`
+
+- **Custom provider matching pattern** — `type`-based fallback for provider resolution (`cp.type === provider`), more robust than `baseUrl` matching since model provider strings are constructed from name or type, never URLs.
+  - Files: `src/sidepanel.ts`
+
 ## License
 
 This project is licensed under the [GNU Affero General Public License v3.0](LICENSE).
