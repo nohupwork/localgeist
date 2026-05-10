@@ -114,6 +114,7 @@ export async function browserMessageTransformer(messages: AgentMessage[]): Promi
 
 			transformed.push({
 				role: "user",
+				timestamp: nav.timestamp,
 				content: `<browser-context>
 ✓ Navigation succeeded: ${nav.title}${tabInfo}
 ✓ URL: ${nav.url}

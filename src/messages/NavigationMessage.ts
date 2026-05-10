@@ -17,6 +17,7 @@ export interface NavigationMessage {
 	title: string;
 	favicon?: string;
 	tabId?: number;
+	timestamp: number;
 	skillsOutput: string; // Frozen formatted skills text (shown to LLM)
 }
 
@@ -134,6 +135,7 @@ export async function createNavigationMessage(
 		title,
 		favicon,
 		tabId,
+		timestamp: Date.now(),
 		skillsOutput,
 	};
 }
