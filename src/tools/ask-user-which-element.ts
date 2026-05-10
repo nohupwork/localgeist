@@ -76,7 +76,7 @@ async function createElementPickerOverlay(message?: string) {
 	return new Promise((resolve) => {
 		// Create overlay container
 		const overlay = document.createElement("div");
-		overlay.id = "sitegeist-element-picker";
+		overlay.id = "localgeist-element-picker";
 		overlay.style.cssText = `
 		position: fixed;
 		top: 0;
@@ -184,7 +184,7 @@ async function createElementPickerOverlay(message?: string) {
 				let selector = current.tagName.toLowerCase();
 
 				if (current.className && typeof current.className === "string") {
-					const classes = current.className.split(/\s+/).filter((c) => c && !c.startsWith("sitegeist-"));
+					const classes = current.className.split(/\s+/).filter((c) => c && !c.startsWith("localgeist-"));
 					if (classes.length > 0) {
 						selector += `.${classes.map((c) => CSS.escape(c)).join(".")}`;
 					}
@@ -451,7 +451,7 @@ async function createElementPickerOverlay(message?: string) {
 			document.removeEventListener("mousemove", handleMouseMove, true);
 			document.removeEventListener("click", handleClick, true);
 			document.removeEventListener("keydown", handleKeyDown, true);
-			window.removeEventListener("sitegeist-element-cancel", handleCancel);
+			window.removeEventListener("localgeist-element-cancel", handleCancel);
 			overlay.remove();
 			banner.remove();
 			delete window.__localgeistElementPicker;
@@ -506,7 +506,7 @@ async function createElementPickerOverlay(message?: string) {
 		}
 
 		// Listen for external cancel event (from abort signal)
-		window.addEventListener("sitegeist-element-cancel", handleCancel, {
+		window.addEventListener("localgeist-element-cancel", handleCancel, {
 			once: true,
 		});
 
@@ -596,7 +596,7 @@ export class AskUserWhichElementTool implements AgentTool<typeof selectElementSc
 							} else {
 								signal.addEventListener("abort", () => {
 									// Try to cleanup overlay when aborted
-									const cleanupCode = `window.dispatchEvent(new CustomEvent("sitegeist-element-cancel"));`;
+									const cleanupCode = `window.dispatchEvent(new CustomEvent("localgeist-element-cancel"));`;
 									chrome.userScripts
 										?.execute({
 											target: { tabId: tab.id!, allFrames: false },

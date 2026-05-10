@@ -69,6 +69,8 @@ Internal identifiers for `chrome.userScripts` and DOM elements. Must be consiste
 - `window.dispatchEvent(new CustomEvent("sitegeist-element-cancel"))` → `"localgeist-element-cancel"`
 - `.filter((c) => c && !c.startsWith("sitegeist-"))` → `"localgeist-"`
 
+**Status:** DONE. `npm run check` and `npm run build` pass. Zero `sitegeist` references remain in affected files.
+
 ## Phase 1: User-Facing Strings
 
 Display text, comments, manifest. No code references affected.
@@ -212,11 +214,6 @@ Class/function renames and import updates. TypeScript catches broken imports; cu
 - `Sitegeist prompts you` → `localgeist prompts you`
 - **Keep:** Link to original Sitegeist project if present
 
-**File:** `AGENTS.md`
-- `Localgeist is a local-first fork of [Sitegeist]` — keep (fork context)
-- `sitegeist/    (this project)` → `localgeist/    (this project)`
-- `cd ../sitegeist` → `cd ../localgeist`
-
 **File:** `simple-install.md`
 - `Remove any existing Sitegeist installation` → `localgeist installation`
 - `Sitegeist card` → `localgeist card`
@@ -331,6 +328,7 @@ Documentation in `docs/` and build scripts. Code examples and paths must reflect
 5. Phase 2 (internal names) — all renames together to avoid broken imports
 6. Phase 3 (i18n) — after Phase 2, verify no upstream conflicts
 7. Phase 5 (documentation) — can be done anytime, no code impact
+8. Phase 5b (technical docs) — code examples, paths, build scripts
 
 ## Pain Points
 

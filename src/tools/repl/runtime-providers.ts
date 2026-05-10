@@ -187,7 +187,7 @@ export class BrowserJsRuntimeProvider implements SandboxRuntimeProvider {
 		);
 
 		// Use fixed worldId for all executions
-		const FIXED_WORLD_ID = "sitegeist-browser-script";
+		const FIXED_WORLD_ID = "localgeist-browser-script";
 
 		// Check if terminate API is available (Chrome 138+)
 		// @ts-expect-error - terminate is not yet in the type definitions
