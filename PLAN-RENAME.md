@@ -205,6 +205,8 @@ Class/function renames and import updates. TypeScript catches broken imports; cu
 
 **After:** Run `npm install` to regenerate `package-lock.json` with new name. Do not edit manually.
 
+**Status:** DONE. `npm run check` and `npm run build` pass. `package-lock.json` regenerated via `npm install`.
+
 ## Phase 5: Documentation (Keep fork context references)
 
 **File:** `README.md`
