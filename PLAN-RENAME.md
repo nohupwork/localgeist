@@ -194,6 +194,8 @@ Class/function renames and import updates. TypeScript catches broken imports; cu
 
 **Check:** Verify no translation keys inside the object literal reference upstream pi-web-ui elements.
 
+**Status:** DONE. `npm run check` and `npm run build` pass. Zero `sitegeist`/`Sitegeist` references remain in `src/`.
+
 ## Phase 4: Config Files
 
 **File:** `package.json`
