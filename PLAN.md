@@ -29,6 +29,30 @@ Localgeist is a local-first fork of [Sitegeist](https://github.com/badlogic/site
 - Migrated to `agent.steer()` for navigation messages
 - Session list delete confirmation, keyboard shortcut fix, tutorial pill title update
 
+## Rename Sitegeist → Localgeist
+
+~99 references remain across `src/`. Scope:
+
+**Must change (user-facing):**
+- System prompt: `You are Sitegeist, not Claude` → `You are Localgeist, not Claude`
+- Welcome dialog: `Welcome to Sitegeist` → `Welcome to Localgeist`
+- Manifest name: `sitegeist` → `Localgeist`
+- Download filenames: `sitegeist-skills-*`, `sitegeist-sessions-*` → `localgeist-*`
+- Custom element names: `sitegeist-user-message`, `sitegeist-session-list-dialog` → `localgeist-*`
+- OAuth originator parameter
+
+**Should change (internal consistency):**
+- Class names: `SitegeistAppStorage` → `LocalgeistAppStorage`, `SitegeistSessionsStore` → `LocalgeistSessionsStore`, `SitegeistUserMessage` → `LocalgeistUserMessage`, `SitegeistSessionListDialog` → `LocalgeistSessionListDialog`
+- Function names: `getSitegeistStorage()` → `getLocalgeistStorage()`
+- Code comments referencing "Sitegeist"
+
+**Keep as-is:**
+- `__sitegeist_yield()`, `__sitegeist_cancelled` — injected into page contexts, changing breaks existing scripts
+- Database name `sitegeist-storage` — changing breaks existing user data
+- References to original Sitegeist project in documentation/fork context
+
+**Care required:** i18n-extension.ts has translation keys that may reference upstream pi-web-ui elements. Verify before changing.
+
 ## Known Issues
 
 ### Model Selection Resets on New Chat
