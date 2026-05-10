@@ -327,9 +327,51 @@ const saveSession = async () => {
 
 const updateUrl = (sessionId: string) => {
 	const url = new URL(window.location.href);
+	url.searchParams.delete("new");
 	url.searchParams.set("session", sessionId);
 	window.history.replaceState({}, "", url);
 };
+
+const updateNewSessionUrl = () => {
+	const url = new URL(window.location.href);
+	url.searchParams.delete("session");
+	url.searchParams.set("new", "true");
+	window.history.replaceState({}, "", url);
+};
+
+const SESSION_LOCKS_KEY = "session_locks";
+
+const releaseSessionLock = async (sessionId: string | undefined) => {
+	if (!sessionId) return;
+
+	try {
+		const data = await chrome.storage.session.get(SESSION_LOCKS_KEY);
+		const sessionLocks: Record<string, number> = (data[SESSION_LOCKS_KEY] as Record<string, number>) || {};
+
+		if (sessionLocks[sessionId] === currentWindowId) {
+			delete sessionLocks[sessionId];
+			await chrome.storage.session.set({ [SESSION_LOCKS_KEY]: sessionLocks });
+		}
+	} catch (err) {
+		console.error("Failed to release session lock:", err);
+	}
+};
+
+async function persistSelectedModel(model: Model<any>) {
+	await storage.settings.set("lastUsedModel", model);
+
+	if (currentSessionId) {
+		await saveSession();
+	}
+}
+
+function appendAgentMessage(message: AgentMessage) {
+	agent.state.messages = [...agent.state.messages, message];
+}
+
+function refreshAgentMessages(targetAgent: Agent) {
+	targetAgent.state.messages = targetAgent.state.messages.slice();
+}
 
 const createAgent = async (initialState?: Partial<AgentState>, shouldSave = true) => {
 	if (agentUnsubscribe) {
