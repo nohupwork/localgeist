@@ -39,19 +39,7 @@ npm install
 
 `npm install` sets up the Husky pre-commit hook automatically.
 
-Start all dev watchers (mini-lit, pi, sitegeist extension, marketing site):
-
-```bash
-./dev.sh
-```
-
-Changes in `../mini-lit` or `../pi` are rebuilt automatically and picked up by the sitegeist watcher.
-
-To run only the extension watcher without dependencies or the marketing site:
-
-```bash
-npm run dev
-```
+The sibling repos `../mini-lit` and `../pi` are upstream dependencies. Do not modify them — they are referenced here for build resolution only.
 
 ### Loading the extension
 
@@ -62,8 +50,6 @@ npm run dev
 5. Click "Details" on the Sitegeist extension and enable:
    - **Allow user scripts**
    - **Allow access to file URLs**
-
-The extension hot-reloads when the dev watcher rebuilds.
 
 ### First run
 

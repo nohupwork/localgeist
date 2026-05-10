@@ -8,7 +8,7 @@ Localgeist is a local-first fork of [Sitegeist](https://github.com/badlogic/site
 
 ## Commands
 - After code changes: run `npm run check`. Fix all errors and warnings before committing.
-- The user runs `../pi/dev.sh` or equivalent in a separate tmux session. Do not run `npm run dev` or `npm run build` unless asked.
+- Do not run `npm run dev` or `npm run build` unless asked.
 - NEVER commit unless the user asks.
 
 ## Code Quality
@@ -23,8 +23,7 @@ All tools implement `prepareArguments` to normalize model-specific arg formats b
 
 ## Dependencies
 - `@mariozechner/mini-lit`, `@earendil-works/pi-ai`, `@earendil-works/pi-web-ui`, `@earendil-works/pi-agent-core` are linked via `file:` to sibling repos `../mini-lit` and `../pi`
-- Changes to those packages require rebuilding them (the dev watcher handles this)
-- If you need to modify upstream code, edit it in `../pi` or `../mini-lit` directly and rebuild
+- These are upstream dependencies — do not modify them
 
 ## Changelog
 Location: `CHANGELOG.md`
@@ -76,7 +75,6 @@ cd ../sitegeist && npm install && npm run build
 ### Day-to-day
 
 ```bash
-npm run dev       # sitegeist extension watcher only
 npm run build     # production build -> dist-chrome/
 npx tsc --noEmit  # typecheck
 ```
