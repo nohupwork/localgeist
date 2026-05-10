@@ -364,10 +364,6 @@ async function persistSelectedModel(model: Model<any>) {
 	}
 }
 
-function appendAgentMessage(message: AgentMessage) {
-	agent.state.messages = [...agent.state.messages, message];
-}
-
 function refreshAgentMessages(targetAgent: Agent) {
 	targetAgent.state.messages = targetAgent.state.messages.slice();
 }
