@@ -54,69 +54,38 @@ Migrated `debuggerMode` and `showJsonMode` to `storage.settings`. All settings n
 
 ---
 
-### 5. `as any` casts
+### 5. `as any` casts — REVIEWED, no change
 
-**Issue:** TypeScript contravariance with `AgentTool` requires some `as any` casts. Verify these are still necessary with current types.
+**17 total casts, all necessary. Two categories:**
 
-```bash
-grep -rn "as any" src/tools/ --include="*.ts"
-```
+1. **`window` custom properties** (14) — injecting functions into page context (`nativeClick`, `sendRuntimeMessage`, `__sitegeist_cancelled` etc.). Same pattern used in pi-web-ui itself (ArtifactsRuntimeProvider, FileDownloadRuntimeProvider, AttachmentsRuntimeProvider).
+2. **Chrome API results** (3) — `chrome.userScripts.execute()` returns untyped results.
 
-**Risk:** Low — accepted limitation per AGENTS.md.
-
----
-
-### 6. Missing `executionMode` on tools
-
-**Issue:** The `AgentTool` interface now supports `executionMode?: "sequential" | "parallel"` for per-tool override. None of our tools set this.
-
-**Check:**
-```bash
-grep -rn "executionMode" src/tools/ --include="*.ts"
-```
-
-**Risk:** Low — uses Agent-level default (`toolExecution: "sequential"`). Could be optimized if some tools are safe to run in parallel.
+No types exist for runtime-injected globals. `as any` is the established pattern in both Localgeist and upstream pi.
 
 ---
 
-### 7. Event handling completeness
+### 6. Missing `executionMode` on tools — REVIEWED, defer
 
-**Issue:** New event type `resources_update` exists in pi but is not handled.
-
-**Current events handled in sidepanel.ts:**
-- `message_end` — refresh messages
-- `agent_end` — re-render after idle
-
-**New events in pi:**
-- `resources_update` — emitted when `setResources()` is called (not used by Localgeist since it doesn't use AgentHarness)
-
-**Risk:** None — irrelevant without AgentHarness usage.
+Agent-level default is `"sequential"`. Per-tool `executionMode` only matters if someone switches to parallel mode and wants selective sequential tools. With a single LLM backend, parallel execution provides no benefit. Defer until needed.
 
 ---
 
-### 8. Build config `node:*` externals
+### 7. Event handling completeness — REVIEWED, no change
 
-**Issue:** `scripts/build.mjs` marks `node:*` builtins as external because pi-agent-core bundles server-side code (session storage, shell utils). This is a workaround, not an ideal solution.
-
-**Locations:**
-- `scripts/build.mjs` — `external: ["node:fs", "node:crypto", ...]`
-
-**Risk:** Medium — if Localgeist ever imports from the server-side modules, the externals will cause runtime errors. Acceptable for now since those modules are never reached.
-
-**Future:** If pi splits browser/server builds, remove externals.
+`resources_update` is emitted by `AgentHarness.setResources()`. Localgeist uses `Agent` directly (not `AgentHarness`), implementing its own skills/prompt system. Irrelevant without AgentHarness.
 
 ---
 
-### 9. `prepareArguments` on tools
+### 8. Build config `node:*` shim — REVIEWED, workaround in place
 
-**Issue:** AgentTool now supports optional `prepareArguments?: (args: unknown) => Static<TParameters>` for pre-validation arg transformation. None of our tools use this.
+**Fixed (decf719):** pi-agent-core bundles server-side code (session storage, shell utils) with `node:*` imports. Esbuild `external` violated Chrome CSP, so switched to `alias` → `scripts/node-shim.js` (empty stubs). Works correctly; remove if pi ever splits browser/server builds.
 
-**Check:**
-```bash
-grep -rn "prepareArguments" src/tools/ --include="*.ts"
-```
+---
 
-**Risk:** None — nice-to-have for arg compatibility shims.
+### 9. `prepareArguments` on tools — FIXED (9b24a3a)
+
+Added `prepareArguments` to all 6 tools for model compatibility. Normalizes common quirks before schema validation (descriptive action strings, nested objects, mode variants). Matches upstream pi pattern from coding-agent.
 
 ---
 
@@ -225,11 +194,11 @@ grep -rn "terminate" src/tools/ --include="*.ts"
 | **Done** | #4 Subscribe typing | Fixed (892b40b) |
 | **Done** | #10 Message transformer | Reviewed. Fixed timestamp (f63b50e). Removed dead `continue` type |
 | **Done** | #11 Custom provider handling | Fixed (3bd74ab, 336974a, 2705ee9) |
-| **Low** | #5 as any casts | Accepted limitation |
-| **Low** | #6 executionMode | Optimization, not correctness |
-| **Low** | #7 Event completeness | Irrelevant without AgentHarness |
-| **Low** | #8 Build externals | Workaround, document risk |
-| **Low** | #9 prepareArguments | Nice-to-have |
+| **Done** | #5 as any casts | Reviewed, necessary, matches upstream pi |
+| **Done** | #6 executionMode | Reviewed, defer (sequential default is correct) |
+| **Done** | #7 Event completeness | Reviewed, irrelevant without AgentHarness |
+| **Done** | #8 Build shim | Reviewed, workaround in place (decf719) |
+| **Done** | #9 prepareArguments | Fixed (9b24a3a) |
 | **Low** | #12 Module augmentation | Typechecks pass |
 | **Low** | #13 ThinkingLevelSelectEvent | Handled by ChatPanel |
 | **Low** | #14 Skill loading | Current pattern works |

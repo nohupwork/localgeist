@@ -12,10 +12,14 @@ Localgeist is a local-first fork of [Sitegeist](https://github.com/badlogic/site
 - NEVER commit unless the user asks.
 
 ## Code Quality
-- No `any` types unless absolutely necessary (7 tool `as any` casts are accepted — TypeScript contravariance with `AgentTool`, params validated by TypeBox schemas at runtime)
+- No `any` types unless absolutely necessary (17 tool `as any` casts are accepted — `window` custom properties and Chrome API results, matches upstream pi pattern)
 - Check node_modules for external API type definitions instead of guessing
 - NEVER use inline imports (no `await import(...)`, no `import("pkg").Type`)
 - Always ask before removing functionality or code that appears intentional
+
+## Tool `prepareArguments` — Living Shim
+
+All tools implement `prepareArguments` to normalize model-specific arg formats before TypeBox schema validation. Current transformations are defensive scaffolding based on upstream pi patterns (coding-agent edit tool). They are **not yet synced with observed model failures** — refine when specific models send unexpected arg formats. See `PLAN-AUDIT.md` #9.
 
 ## Dependencies
 - `@mariozechner/mini-lit`, `@earendil-works/pi-ai`, `@earendil-works/pi-web-ui`, `@earendil-works/pi-agent-core` are linked via `file:` to sibling repos `../mini-lit` and `../pi`
