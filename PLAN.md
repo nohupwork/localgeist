@@ -29,6 +29,21 @@ Localgeist is a local-first fork of [Sitegeist](https://github.com/badlogic/site
 - Migrated to `agent.steer()` for navigation messages
 - Session list delete confirmation, keyboard shortcut fix, tutorial pill title update
 
+## Archive site/
+
+The `site/` directory (marketing site) is no longer needed. Project will be hosted on GitHub only.
+
+**Files to archive:**
+- `site/` — entire directory (src, infra, config, scripts)
+- `site/run.sh` — deploy script
+- `scripts/dev-server.mjs` — local dev server for site
+
+**Cleanup:**
+- Remove `cd site && npm run check` from `package.json` `check` script
+- Remove site references from `package.json` `dev` script
+- Remove `site/dist/` from `.gitignore`
+- Update `AGENTS.md` project structure if referenced
+
 ## Rename Sitegeist → Localgeist
 
 ~99 references remain across `src/`. Scope:
