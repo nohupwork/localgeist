@@ -444,9 +444,8 @@ const createAgent = async (initialState?: Partial<AgentState>, shouldSave = true
 				return resolveApiKey(stored, provider, storage.providerKeys, proxyUrl);
 			}
 			// Check custom/local providers - any custom provider match returns empty string (no key needed)
-			// TODO: Custom provider keys not found correctly, requires dummy API key workaround (see known-issues.md)
 			const customProviders = await storage.customProviders.getAll();
-			const custom = customProviders.find((p) => p.name === provider);
+			const custom = customProviders.find((p) => p.name === provider || p.baseUrl === provider);
 			if (custom) {
 				return custom.apiKey || "";
 			}
