@@ -5,8 +5,8 @@ import { icon } from "@mariozechner/mini-lit/dist/icons.js";
 import { Switch } from "@mariozechner/mini-lit/dist/Switch.js";
 import { html, render } from "lit";
 import { ArrowLeft, Bug, MousePointer2, Play, Sparkles } from "lucide";
-import "./debug/ReplPanel.js";
 import { SitegeistAppStorage } from "./storage/app-storage.js";
+import "./debug/ReplPanel.js";
 import { askUserWhichElementTool } from "./tools/ask-user-which-element.js";
 
 interface TestPrompt {
@@ -66,19 +66,18 @@ const TEST_PROMPTS: TestPrompt[] = [
 
 const renderDebugPage = async () => {
 	// Get current debugger mode state
-	const stored = await chrome.storage.local.get(["debuggerMode", "showJsonMode"]);
-	let debuggerMode = (stored.debuggerMode as boolean) || false;
-	let showJsonMode = (stored.showJsonMode as boolean) || false;
+	let debuggerMode = (await storage.settings.get<boolean>("debuggerMode")) || false;
+	let showJsonMode = (await storage.settings.get<boolean>("showJsonMode")) || false;
 
 	const updateDebuggerMode = async (enabled: boolean) => {
 		debuggerMode = enabled;
-		await chrome.storage.local.set({ debuggerMode: enabled });
+		await storage.settings.set("debuggerMode", enabled);
 		renderDebugPage(); // Re-render to update UI
 	};
 
 	const updateShowJsonMode = async (enabled: boolean) => {
 		showJsonMode = enabled;
-		await chrome.storage.local.set({ showJsonMode: enabled });
+		await storage.settings.set("showJsonMode", enabled);
 		renderDebugPage(); // Re-render to update UI
 	};
 

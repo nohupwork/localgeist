@@ -387,8 +387,7 @@ const createAgent = async (initialState?: Partial<AgentState>, shouldSave = true
 	shownSkills.clear();
 
 	// Load debugger mode setting
-	const stored = await chrome.storage.local.get("debuggerMode");
-	const debuggerModeEnabled = stored.debuggerMode || false;
+	const debuggerModeEnabled = (await storage.settings.get<boolean>("debuggerMode")) || false;
 
 	// Load CORS proxy settings for extract_document tool
 	const corsProxyEnabled = await storage.settings.get<boolean>("proxy.enabled");
@@ -1034,8 +1033,7 @@ async function initApp() {
 		);
 
 		// Load showJsonMode setting
-		const stored = await chrome.storage.local.get("showJsonMode");
-		const showJsonModeEnabled = (stored.showJsonMode as boolean) || false;
+		const showJsonModeEnabled = (await storage.settings.get<boolean>("showJsonMode")) || false;
 		setShowJsonMode(showJsonModeEnabled);
 
 		// Get current window ID for filtering tab events
