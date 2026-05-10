@@ -8,6 +8,7 @@ This project incorporates changes from several community forks. All original and
 
 - **Sitegeist** by [Mario Zechner](https://github.com/badlogic) — [github.com/badlogic/sitegeist](https://github.com/badlogic/sitegeist)
   - Foundation of this project. Browser extension architecture, agent system, tool framework, skills system, session management, and core UI.
+- **pi (Earendil Works)** — [github.com/earendil-works/pi](https://github.com/earendil-works/pi)
 
 ## Community Forks
 

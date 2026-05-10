@@ -43,6 +43,17 @@ const buildOptions = {
 		global: "globalThis",
 	},
 	inject: [join(packageRoot, "scripts/process-shim.js")],
+	// Mark Node.js builtins as external — pi-agent-core bundles server-side code
+	// (session storage, shell utils) that is never executed in the browser
+	external: [
+		"node:fs",
+		"node:fs/promises",
+		"node:crypto",
+		"node:child_process",
+		"node:path",
+		"node:os",
+		"node:readline",
+	],
 	// Force all mini-lit and lit imports to resolve to sitegeist's node_modules
 	alias: {
 		process: join(packageRoot, "scripts/process-shim.js"),

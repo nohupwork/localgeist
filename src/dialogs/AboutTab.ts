@@ -1,6 +1,6 @@
+import { SettingsTab } from "@earendil-works/pi-web-ui";
 import { html } from "lit";
 import { customElement } from "lit/decorators.js";
-import { SettingsTab } from "@mariozechner/pi-web-ui";
 
 @customElement("sg-about-tab")
 export class AboutTab extends SettingsTab {

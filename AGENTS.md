@@ -8,7 +8,7 @@ Localgeist is a local-first fork of [Sitegeist](https://github.com/badlogic/site
 
 ## Commands
 - After code changes: run `npm run check`. Fix all errors and warnings before committing.
-- The user runs `../pi-mono/dev.sh` or equivalent in a separate tmux session. Do not run `npm run dev` or `npm run build` unless asked.
+- The user runs `../pi/dev.sh` or equivalent in a separate tmux session. Do not run `npm run dev` or `npm run build` unless asked.
 - NEVER commit unless the user asks.
 
 ## Code Quality
@@ -18,9 +18,9 @@ Localgeist is a local-first fork of [Sitegeist](https://github.com/badlogic/site
 - Always ask before removing functionality or code that appears intentional
 
 ## Dependencies
-- `@mariozechner/mini-lit`, `@mariozechner/pi-ai`, `@mariozechner/pi-web-ui`, `@mariozechner/pi-agent-core` are linked via `file:` to sibling repos `../mini-lit` and `../pi-mono`
+- `@mariozechner/mini-lit`, `@earendil-works/pi-ai`, `@earendil-works/pi-web-ui`, `@earendil-works/pi-agent-core` are linked via `file:` to sibling repos `../mini-lit` and `../pi`
 - Changes to those packages require rebuilding them (the dev watcher handles this)
-- If you need to modify upstream code, edit it in `../pi-mono` or `../mini-lit` directly and rebuild
+- If you need to modify upstream code, edit it in `../pi` or `../mini-lit` directly and rebuild
 
 ## Changelog
 Location: `CHANGELOG.md`
@@ -57,7 +57,7 @@ Requires sibling repos:
 ```
 parent/
   mini-lit/
-  pi-mono/
+  pi/
   sitegeist/    (this project)
 ```
 
@@ -65,7 +65,7 @@ parent/
 
 ```bash
 cd ../mini-lit  && npm install && npm run build
-cd ../pi-mono   && npm install && npm run build
+cd ../pi       && npm install && npm run build
 cd ../sitegeist && npm install && npm run build
 ```
 

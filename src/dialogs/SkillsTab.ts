@@ -1,11 +1,11 @@
+import { SettingsTab } from "@earendil-works/pi-web-ui";
 import { Button } from "@mariozechner/mini-lit/dist/Button.js";
 import { Input } from "@mariozechner/mini-lit/dist/Input.js";
-import { SettingsTab } from "@mariozechner/pi-web-ui";
 import { html } from "lit";
+import { customElement } from "lit/decorators.js";
 import { Toast } from "../components/Toast.js";
 import { getSitegeistStorage } from "../storage/app-storage.js";
 import type { Skill } from "../storage/stores/skills-store.js";
-import { customElement } from "lit/decorators.js";
 import { getFaviconUrl } from "../utils/favicon.js";
 
 @customElement("sg-skills-tab")
@@ -390,5 +390,3 @@ export class SkillsTab extends SettingsTab {
 		`;
 	}
 }
-
-
