@@ -224,6 +224,7 @@ These are internal identifiers for `chrome.userScripts` and DOM elements. They c
 - `Select sitegeist/dist-chrome/` → `Select localgeist/dist-chrome/`
 - `Sitegeist extension` → `localgeist extension`
 - `Sitegeist prompts you` → `localgeist prompts you`
+- **Keep:** Link to original Sitegeist project if present
 
 **File:** `AGENTS.md`
 - `Localgeist is a local-first fork of [Sitegeist]` — keep (fork context)
@@ -238,17 +239,15 @@ These are internal identifiers for `chrome.userScripts` and DOM elements. They c
 - `Sitegeist icon` → `localgeist icon`
 
 **File:** `SCRIPT_CANCELLATION.md`
-- All `__sitegeist_cancelled` → `__localgeist_cancelled`
-- All `__sitegeist_yield()` → `__localgeist_yield()`
-- All code examples and references
+- **Archive this file** — it documents the old Promise wrapping approach which was removed. Current implementation is flag-based only. Code examples are stale.
+- Move to `archive/SCRIPT_CANCELLATION.md`
 
 **File:** `CHANGELOG.md`
-- `Renamed project from Sitegeist to Localgeist` — keep (historical)
-- `__sitegeist_yield()` → `__localgeist_yield()` (if still referenced)
+- Add entry under `## [Unreleased]` → `### Changed`: `Renamed project to localgeist (all references, UI, manifests, code)`
+- Do not modify historical entries
 
 **File:** `CREDITS.md`
-- Keep all original Sitegeist attribution — do not change
-- `__sitegeist_cancelled`, `__sitegeist_yield()` → `__localgeist_cancelled`, `__localgeist_yield()` (code references)
+- **Do not modify** — historical attribution to original Sitegeist and contributors
 
 **File:** `PLAN.md`
 - Update project name references where appropriate
