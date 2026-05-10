@@ -2,41 +2,59 @@
 
 ## [Unreleased]
 
+### Breaking Changes
+
+- Renamed project from Sitegeist to Localgeist. All references updated.
+- Migrated pi dependencies from `@mariozechner/pi-*` (pi-mono) to `@earendil-works/pi-*` (pi). Requires `../pi` sibling repo.
+
 ### Removed
 
-- `README.md` references to external servers: download links (`sitegeist.ai`), CORS proxy (`proxy.mariozechner.at`), website deploy instructions, release instructions
-- Deployment infrastructure: `publish.sh`, `release.sh`, `.github/workflows/build.yml`
-- Update check mechanism: `checkForUpdates()` function, `UpdateNotificationDialog`, `isNewerVersion()` helper — extension no longer contacts `sitegeist.ai` for version checks
-- `UpdateNotificationDialog.ts` — no longer used
-- Deploy case from `site/run.sh` — SSH/rsync to external server removed
-- CORS proxy references from tutorial text
-- External telemetry: all calls to `sitegeist.ai` and `proxy.mariozechner.at` removed
+- All deployment infrastructure: `publish.sh`, `release.sh`, `.github/workflows/build.yml`, external server references
+- Update check mechanism and `UpdateNotificationDialog`
+- `ApiKeyOrOAuthDialog`, `ApiKeysOAuthTab` (moved to `archive/`)
+- Dead types: `ContinueMessage`, `custom-messages.ts`, `appendAgentMessage` helper
+- Debug logging from `getApiKey()`
 
 ### Changed
 
 - `@tailwindcss/cli` upgraded from `^4.0.0-beta.14` to `^4.2.0` (stable release)
-- `AboutTab` replaced with minimal placeholder (removed website links and update check)
-- Added `typescript` as explicit dev dependency for `npm run typecheck`
-- Fixed TypeScript errors: replaced removed Agent API methods (`setModel` → `state.model`, `appendMessage` → `state.messages.push`, `replaceMessages` → `state.messages =`), added `onUpdate` parameter to tool `execute` methods, cast tool instances for `AgentTool` contravariance (tools accept typed params, interface expects `unknown`), cleaned up unused `@ts-expect-error` directives in cancellation code
-- Replaced `@sinclair/typebox` 0.34.x with `typebox` 1.x (package rename) to align with `pi-mono`
-- Verified all imports from `pi-mono` (pi-agent-core, pi-ai, pi-web-ui) and `mini-lit` are compatible with latest versions
+- `AboutTab` replaced with minimal placeholder
+- Replaced `@sinclair/typebox` 0.34.x with `typebox` 1.x
+- Standardized tool `execute()` return types to `AgentToolResult<T>`
+- Added timestamps to `NavigationMessage`, matching other message types
+- Migrated `debuggerMode` and `showJsonMode` from `chrome.storage.local` to settings store
+- Replaced esbuild `external` with alias shim for `node:*` builtins
+- Live-reload script guarded to dev builds only
+- Navigation messages use `agent.steer()` instead of direct `state.messages.push()`
+- Post-agent-end re-render uses `waitForIdle()` to prevent blank screen
 
 ### Added
 
-- Gmail automation skill: integrated `gmail.md` into `default-skills.ts` — 15 functions for composing, reading, replying, searching, and managing emails on `mail.google.com`
-- Local model support: replaced `ApiKeysOAuthTab` with `ProvidersModelsTab` from `pi-web-ui` — Ollama, llama.cpp (port 8080), vLLM, LM Studio discovery now available in settings
-- Hybrid script cancellation for `browserjs()` — `__sitegeist_yield()` helper + V8 `terminate()` backup (PR `c2a47b6`). Promise wrapping removed (broke page contexts). Timeout reduced from 120s to 30s.
-- `SCRIPT_CANCELLATION.md` — documentation of the cooperative cancellation approach
+- Gmail automation skill: 15 functions for composing, reading, replying, searching, and managing emails on `mail.google.com`
+- Local model support: `ProvidersModelsTab` from pi-web-ui — Ollama, llama.cpp, vLLM, LM Studio discovery
+- Hybrid script cancellation for `browserjs()` — `__sitegeist_yield()` helper + V8 `terminate()` backup, 30s timeout
+- `prepareArguments()` on all tools for model-specific argument normalization
+- In-page session switching (no reload) with session lock management
+- Init error boundary with `showError()` fallback UI
+- User message attachment handling in message transformer
+- Brave browser compatibility (Mojo/PageHandler stubs)
+- Keyboard shortcut fallback to last focused window
+- `CREDITS.md` acknowledging upstream contributors
+- `DEFERRED.md` documenting intentionally deferred items
+- `known-issues.md` tracking active bugs
+- `SCRIPT_CANCELLATION.md` documenting cooperative cancellation approach
 
 ### Fixed
 
-- Added `@customElement` decorators to `AboutTab`, `SkillsTab`, `CostsTab` — required by Lit for classes extending `SettingsTab`/`LitElement`, prevents "Illegal constructor" runtime error
-- Removed `ApiKeyOrOAuthDialog` from `onApiKeyRequired` callback — now opens settings dialog so local providers can be configured
-- Moved unused `ApiKeyOrOAuthDialog.ts` to `archive/`
-- ModelSelector now includes custom/local providers in model selection (was filtered out by `allowedProviders` check)
-- `getApiKey` now checks custom providers for API keys, returns empty string for local types (llama.cpp, Ollama, etc.)
-- `hasAnyApiKey` and `getProvidersWithKeys` now include custom/local providers (fixes new chat asking for provider setup)
-- Removed broken Promise constructor wrapping from browserjs() that caused "Promise is not a constructor" errors
+- 83 TypeScript errors: Agent API method replacements (`setModel`, `appendMessage`, `replaceMessages`), added `onUpdate` to tool `execute` methods
+- Added `@customElement` decorators to settings tabs (Lit requirement)
+- ModelSelector includes custom/local providers in selection
+- `getApiKey`, `hasAnyApiKey`, `getProvidersWithKeys` include custom providers
+- Custom provider key resolution: matches on provider `type` instead of `baseUrl`
+- Navigate tool: removed broken `prepareArguments` transformation wrapping `{ url }` into `{ navigate: { url } }`
+- Removed broken Promise constructor wrapping from browserjs()
+- Post-agent-end blank screen (edgyarmati fix)
+- Visibility re-render when sidepanel becomes visible (Chrome throttling)
 
 ## [1.0.0] - 2026-03-15
 
