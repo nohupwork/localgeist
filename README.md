@@ -61,7 +61,7 @@ On first launch, Sitegeist prompts you to connect at least one AI provider. Ente
 ./check.sh
 ```
 
-Runs formatting, linting, and type checking for the extension and the `site/` subproject.
+Runs formatting, linting, and type checking for the extension.
 
 The Husky pre-commit hook runs the same checks before each commit.
 

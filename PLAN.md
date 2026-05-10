@@ -86,6 +86,22 @@ The `site/` directory (marketing site) is no longer needed. Project will be host
 
 **Status:** Documented for later cleanup. Consider shortening, hiding, or removing cloud providers since local models are the primary use case.
 
+## Prioritize Local Models in UI
+
+Make local/custom providers the default and primary focus of the extension.
+
+**Scope:**
+- Model selector: show local providers first, cloud providers in collapsed section
+- Settings: custom providers tab prominent, cloud providers secondary or hidden
+- Welcome/setup flow: guide toward local model setup, not cloud API keys
+- Consider removing cloud provider list entirely if no cloud keys are configured
+
+**Approach:**
+- Filter `ModelSelector` to show only local providers by default
+- Add toggle or collapsed section for cloud providers
+- May require wrapping or extending pi-web-ui's `ModelSelector` component
+- Related to "Cloud Providers List Too Long" known issue
+
 ### Context Size Shows Default Values
 
 **Symptom:** llama.cpp models show "8k/4k" for context/max tokens instead of actual values (e.g., 262k for Qwen3.6-27B).

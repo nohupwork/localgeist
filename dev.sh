@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Start all development servers for sitegeist and its dependencies
+# Start development servers for localgeist and its dependencies
 # Usage: ./dev.sh
 
 set -e
@@ -9,8 +9,8 @@ echo "Starting development servers..."
 echo ""
 
 # Check if required directories exist
-if [ ! -d "../pi-mono" ]; then
-    echo "Error: pi-mono not found at ../pi-mono"
+if [ ! -d "../pi" ]; then
+    echo "Error: pi not found at ../pi"
     exit 1
 fi
 
@@ -27,28 +27,22 @@ echo "Starting mini-lit dev server..."
 (cd ../mini-lit && npm run dev:tsc) &
 MINI_LIT_PID=$!
 
-echo "Starting pi-mono dev server..."
-(cd ../pi-mono && npm run dev:tsc) &
-PI_MONO_PID=$!
+echo "Starting pi dev server..."
+(cd ../pi && npm run dev:tsc) &
+PI_PID=$!
 
 # Wait a moment for dependencies to start building
 sleep 2
 
-echo "Starting sitegeist dev server..."
+echo "Starting localgeist dev server..."
 npm run dev &
-SITEGEIST_PID=$!
-
-echo "Starting sitegeist site dev server..."
-(cd site && ./run.sh dev) &
-SITE_PID=$!
+LOCALGEIST_PID=$!
 
 echo ""
 echo "All dev services started"
 echo "  mini-lit: watching"
-echo "  pi-mono: watching"
-echo "  sitegeist: watching"
-echo "  site backend: http://localhost:3000"
-echo "  site frontend: http://localhost:8080"
+echo "  pi: watching"
+echo "  localgeist: watching"
 echo ""
 echo "Press Ctrl+C to stop all services"
 echo ""
