@@ -1003,135 +1003,156 @@ async function testSteps(): Promise<boolean> {
 // ============================================================================
 // INIT
 // ============================================================================
-async function initApp() {
-	// Show loading
+function showError(err: unknown) {
+	const message = err instanceof Error ? err.message : String(err);
+	console.error("[Sidepanel] Init failed:", err);
 	render(
 		html`
 			<div class="w-full h-full flex items-center justify-center bg-background text-foreground">
-				<div class="text-muted-foreground">Loading...</div>
+				<div class="text-destructive text-center p-4">
+					<div class="font-bold mb-2">Failed to load extension</div>
+					<div class="text-sm">${message}</div>
+					<div class="text-xs mt-2 text-muted-foreground">Open DevTools (F12) for details</div>
+				</div>
 			</div>
 		`,
 		document.body,
 	);
+}
 
-	// Load showJsonMode setting
-	const stored = await chrome.storage.local.get("showJsonMode");
-	const showJsonModeEnabled = (stored.showJsonMode as boolean) || false;
-	setShowJsonMode(showJsonModeEnabled);
+async function initApp() {
+	try {
+		// Show loading
+		render(
+			html`
+			<div class="w-full h-full flex items-center justify-center bg-background text-foreground">
+				<div class="text-muted-foreground">Loading...</div>
+			</div>
+		`,
+			document.body,
+		);
 
-	// Get current window ID for filtering tab events
-	const currentWindow = await chrome.windows.getCurrent();
-	if (!currentWindow.id) {
-		throw new Error("Failed to get current window ID");
-	}
-	currentWindowId = currentWindow.id;
+		// Load showJsonMode setting
+		const stored = await chrome.storage.local.get("showJsonMode");
+		const showJsonModeEnabled = (stored.showJsonMode as boolean) || false;
+		setShowJsonMode(showJsonModeEnabled);
 
-	// Initialize port communication system
-	port.initialize(currentWindowId);
-
-	// TODO reenable Request persistent storage
-	// if (storage.sessions) {
-	// 	await PersistentStorageDialog.request();
-	// }
-
-	// Request userScripts permission if not available
-	if (!chrome.userScripts) {
-		await UserScriptsPermissionDialog.request();
-	}
-
-	// Initialize default skills
-	const { initializeDefaultSkills } = await import("./tools/skill.js");
-	await initializeDefaultSkills();
-
-	// Proxy disabled — CORS is handled locally via declarativeNetRequest rules
-	await storage.settings.set("proxy.enabled", false);
-
-	// Create ChatPanel
-	chatPanel = new ChatPanel();
-
-	// Handle test steps
-	if (await testSteps()) {
-		return;
-	}
-
-	// Check for session in URL
-	const urlParams = new URLSearchParams(window.location.search);
-	let sessionIdFromUrl = urlParams.get("session");
-	const isNewSession = urlParams.get("new") === "true";
-
-	// If no session in URL and not explicitly creating new, try to load the most recent session
-	if (!sessionIdFromUrl && !isNewSession && storage.sessions) {
-		const latestSessionId = await storage.sessions.getLatestSessionId();
-		if (latestSessionId) {
-			// Try to acquire lock for latest session
-			const lockResponse = await port.sendMessage({
-				type: "acquireLock",
-				sessionId: latestSessionId,
-				windowId: currentWindowId,
-			});
-
-			if (lockResponse.success) {
-				sessionIdFromUrl = latestSessionId;
-				// Update URL to include the latest session
-				updateUrl(latestSessionId);
-			}
-			// If lock fails, fall through to create new session
+		// Get current window ID for filtering tab events
+		const currentWindow = await chrome.windows.getCurrent();
+		if (!currentWindow.id) {
+			throw new Error("Failed to get current window ID");
 		}
-	}
+		currentWindowId = currentWindow.id;
 
-	if (sessionIdFromUrl && storage.sessions) {
-		const sessionData = await storage.sessions.loadSession(sessionIdFromUrl);
-		if (sessionData) {
-			// Try to acquire lock if we don't already have it (in case user navigated directly via URL)
-			const lockResponse = await port.sendMessage({
-				type: "acquireLock",
-				sessionId: sessionIdFromUrl,
-				windowId: currentWindowId,
-			});
+		// Initialize port communication system
+		port.initialize(currentWindowId);
 
-			if (!lockResponse.success) {
-				// Session is locked in another window - show landing page instead
-				await createAgent({
-					messages: [createWelcomeMessage(tutorials)],
+		// TODO reenable Request persistent storage
+		// if (storage.sessions) {
+		// 	await PersistentStorageDialog.request();
+		// }
+
+		// Request userScripts permission if not available
+		if (!chrome.userScripts) {
+			await UserScriptsPermissionDialog.request();
+		}
+
+		// Initialize default skills
+		const { initializeDefaultSkills } = await import("./tools/skill.js");
+		await initializeDefaultSkills();
+
+		// Proxy disabled — CORS is handled locally via declarativeNetRequest rules
+		await storage.settings.set("proxy.enabled", false);
+
+		// Create ChatPanel
+		chatPanel = new ChatPanel();
+
+		// Handle test steps
+		if (await testSteps()) {
+			return;
+		}
+
+		// Check for session in URL
+		const urlParams = new URLSearchParams(window.location.search);
+		let sessionIdFromUrl = urlParams.get("session");
+		const isNewSession = urlParams.get("new") === "true";
+
+		// If no session in URL and not explicitly creating new, try to load the most recent session
+		if (!sessionIdFromUrl && !isNewSession && storage.sessions) {
+			const latestSessionId = await storage.sessions.getLatestSessionId();
+			if (latestSessionId) {
+				// Try to acquire lock for latest session
+				const lockResponse = await port.sendMessage({
+					type: "acquireLock",
+					sessionId: latestSessionId,
+					windowId: currentWindowId,
 				});
+
+				if (lockResponse.success) {
+					sessionIdFromUrl = latestSessionId;
+					// Update URL to include the latest session
+					updateUrl(latestSessionId);
+				}
+				// If lock fails, fall through to create new session
+			}
+		}
+
+		if (sessionIdFromUrl && storage.sessions) {
+			const sessionData = await storage.sessions.loadSession(sessionIdFromUrl);
+			if (sessionData) {
+				// Try to acquire lock if we don't already have it (in case user navigated directly via URL)
+				const lockResponse = await port.sendMessage({
+					type: "acquireLock",
+					sessionId: sessionIdFromUrl,
+					windowId: currentWindowId,
+				});
+
+				if (!lockResponse.success) {
+					// Session is locked in another window - show landing page instead
+					await createAgent({
+						messages: [createWelcomeMessage(tutorials)],
+					});
+					renderApp();
+					return;
+				}
+
+				currentSessionId = sessionIdFromUrl;
+				const metadata = await storage.sessions.getMetadata(sessionIdFromUrl);
+				currentTitle = metadata?.title || "";
+
+				await createAgent({
+					systemPrompt: SYSTEM_PROMPT,
+					model: sessionData.model,
+					thinkingLevel: sessionData.thinkingLevel,
+					messages: sessionData.messages,
+					tools: [],
+				});
+
 				renderApp();
 				return;
+			} else {
+				// Session doesn't exist, redirect to new session
+				await newSession({ saveCurrentSession: false });
+				return;
 			}
-
-			currentSessionId = sessionIdFromUrl;
-			const metadata = await storage.sessions.getMetadata(sessionIdFromUrl);
-			currentTitle = metadata?.title || "";
-
-			await createAgent({
-				systemPrompt: SYSTEM_PROMPT,
-				model: sessionData.model,
-				thinkingLevel: sessionData.thinkingLevel,
-				messages: sessionData.messages,
-				tools: [],
-			});
-
-			renderApp();
-			return;
-		} else {
-			// Session doesn't exist, redirect to new session
-			await newSession({ saveCurrentSession: false });
-			return;
 		}
-	}
 
-	// No session - create new agent with welcome message
-	await createAgent({
-		messages: [createWelcomeMessage(tutorials)],
-	});
+		// No session - create new agent with welcome message
+		await createAgent({
+			messages: [createWelcomeMessage(tutorials)],
+		});
 
-	renderApp();
-
-	// If no API keys configured, show welcome dialog, open settings, then auto-select model
-	if (!(await hasAnyApiKey())) {
-		await WelcomeSetupDialog.show();
-		await openApiKeysDialog();
-		await selectDefaultModelForAvailableProvider();
 		renderApp();
+
+		// If no API keys configured, show welcome dialog, open settings, then auto-select model
+		if (!(await hasAnyApiKey())) {
+			await WelcomeSetupDialog.show();
+			await openApiKeysDialog();
+			await selectDefaultModelForAvailableProvider();
+			renderApp();
+		}
+	} catch (err) {
+		showError(err);
 	}
 }
 
