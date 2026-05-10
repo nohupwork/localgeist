@@ -436,32 +436,21 @@ const createAgent = async (initialState?: Partial<AgentState>, shouldSave = true
 			return (await storage.settings.get<string>("proxy.url")) || undefined;
 		}),
 		getApiKey: async (provider: string) => {
-			// DEBUG: trace provider resolution
-			console.log(`[getApiKey] looking up provider: "${provider}"`);
 			// Check cloud provider keys first
 			const stored = await storage.providerKeys.get(provider);
 			if (stored) {
-				console.log(`[getApiKey] found in providerKeys: "${provider}"`);
 				const proxyEnabled = await storage.settings.get<boolean>("proxy.enabled");
 				const proxyUrl = proxyEnabled ? (await storage.settings.get<string>("proxy.url")) || undefined : undefined;
 				return resolveApiKey(stored, provider, storage.providerKeys, proxyUrl);
 			}
 			// Check custom/local providers - any custom provider match returns empty string (no key needed)
 			const customProviders = await storage.customProviders.getAll();
-			console.log(
-				`[getApiKey] customProviders (${customProviders.length}):`,
-				customProviders.map((p) => ({ name: p.name, baseUrl: p.baseUrl, type: p.type })),
-			);
 			const custom = customProviders.find((p) => p.name === provider || p.baseUrl === provider);
 			if (custom) {
-				console.log(
-					`[getApiKey] matched custom provider: "${custom.name}" (key: ${custom.apiKey ? "set" : "empty"})`,
-				);
 				// Return placeholder if no key set — local providers don't need one,
 				// but pi-ai provider implementations reject empty/falsy apiKey
 				return custom.apiKey || "local";
 			}
-			console.log(`[getApiKey] no match found, returning undefined`);
 			return undefined;
 		},
 	});
