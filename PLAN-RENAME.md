@@ -8,12 +8,23 @@
 
 ## Keep As-Is
 
-Do not change these — they break existing functionality or data:
+Do not change these:
 
-- `__sitegeist_yield()`, `__sitegeist_cancelled` — injected into page contexts
-- Database name `sitegeist-storage` — changing breaks existing user data
 - References to original Sitegeist project in documentation/fork context
 - `archive/` file names (preserved originals)
+
+## Phase 0: Page Context Functions
+
+**Files:** `src/tools/repl/userscripts-helpers.ts`, `src/prompts/prompts.ts`
+
+- `__sitegeist_cancelled` → `__localgeist_cancelled`
+- `__sitegeist_yield()` → `__localgeist_yield()`
+- System prompt references to `__sitegeist_yield()` → `__localgeist_yield()`
+- Comment: `BROWSERJS_RUNTIME_PROVIDER_DESCRIPTION` references
+
+**Also update:** Any saved skills in `default-skills.ts` that reference these functions.
+
+**Note:** Existing IndexedDB data will be orphaned. Acceptable — all current data is from testing.
 
 ## Phase 1: User-Facing Strings
 
@@ -46,6 +57,13 @@ Do not change these — they break existing functionality or data:
 
 **File:** `src/oauth/openai-codex.ts`
 - `url.searchParams.set("originator", "sitegeist")` → `"localgeist"`
+
+### Database Name
+
+**File:** `src/storage/app-storage.ts`
+- `dbName: "sitegeist-storage"` → `dbName: "localgeist-storage"`
+
+**Note:** Existing IndexedDB data will be orphaned. Acceptable — all current data is from testing.
 
 ### Comments
 
@@ -127,10 +145,11 @@ Do not change these — they break existing functionality or data:
 
 ## Execution Order
 
-1. Phase 1 (user-facing strings) — no code references affected
-2. Phase 4 (package.json) — standalone
-3. Phase 2 (internal names) — all renames together to avoid broken imports
-4. Phase 3 (i18n) — after Phase 2, verify no upstream conflicts
+1. Phase 0 (page context functions + database name) — breaks existing data, do first
+2. Phase 1 (user-facing strings) — no code references affected
+3. Phase 4 (package.json) — standalone
+4. Phase 2 (internal names) — all renames together to avoid broken imports
+5. Phase 3 (i18n) — after Phase 2, verify no upstream conflicts
 
 ## Verification
 
