@@ -3,7 +3,7 @@ import { Select, type SelectOption } from "@mariozechner/mini-lit/dist/Select.js
 import { Chart, type ChartConfiguration, registerables } from "chart.js";
 import { html, type PropertyValues } from "lit";
 import { customElement } from "lit/decorators.js";
-import { getSitegeistStorage } from "../storage/app-storage.js";
+import { getLocalgeistStorage } from "../storage/app-storage.js";
 
 // Register Chart.js components
 Chart.register(...registerables);
@@ -67,7 +67,7 @@ export class CostsTab extends SettingsTab {
 	}
 
 	async loadCosts() {
-		const storage = getSitegeistStorage();
+		const storage = getLocalgeistStorage();
 
 		try {
 			const now = new Date();
@@ -120,7 +120,7 @@ export class CostsTab extends SettingsTab {
 	}
 
 	async renderCharts() {
-		const storage = getSitegeistStorage();
+		const storage = getLocalgeistStorage();
 
 		try {
 			// Get CSS variable colors for theming

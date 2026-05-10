@@ -3,7 +3,7 @@ import {
 	BROWSERJS_RUNTIME_PROVIDER_DESCRIPTION,
 	NAVIGATE_RUNTIME_PROVIDER_DESCRIPTION,
 } from "../../prompts/prompts.js";
-import { getSitegeistStorage } from "../../storage/app-storage.js";
+import { getLocalgeistStorage } from "../../storage/app-storage.js";
 import type { NavigateParams, NavigateTool } from "../navigate.js";
 import { buildWrapperCode, checkUserScriptsAvailability } from "./userscripts-helpers.js";
 
@@ -143,7 +143,7 @@ export class BrowserJsRuntimeProvider implements SandboxRuntimeProvider {
 		}
 
 		// Load skills for current tab URL
-		const skillsRepo = getSitegeistStorage().skills;
+		const skillsRepo = getLocalgeistStorage().skills;
 		let skillLibrary = "";
 
 		if (tab.url) {

@@ -4,7 +4,7 @@ import { Input } from "@mariozechner/mini-lit/dist/Input.js";
 import { html } from "lit";
 import { customElement } from "lit/decorators.js";
 import { Toast } from "../components/Toast.js";
-import { getSitegeistStorage } from "../storage/app-storage.js";
+import { getLocalgeistStorage } from "../storage/app-storage.js";
 import type { Skill } from "../storage/stores/skills-store.js";
 import { getFaviconUrl } from "../utils/favicon.js";
 
@@ -28,7 +28,7 @@ export class SkillsTab extends SettingsTab {
 	}
 
 	async loadSkills() {
-		const storage = getSitegeistStorage();
+		const storage = getLocalgeistStorage();
 		this.skills = await storage.skills
 			.list()
 			.then((list) =>
@@ -58,7 +58,7 @@ export class SkillsTab extends SettingsTab {
 	async deleteSkill(skill: Skill) {
 		if (!confirm(`Delete skill "${skill.name}"?`)) return;
 
-		const storage = getSitegeistStorage();
+		const storage = getLocalgeistStorage();
 		await storage.skills.delete(skill.name);
 		await this.loadSkills();
 	}
@@ -75,7 +75,7 @@ export class SkillsTab extends SettingsTab {
 
 	async saveEdit() {
 		if (!this.editingSkill) return;
-		const storage = getSitegeistStorage();
+		const storage = getLocalgeistStorage();
 		const toSave: Skill = {
 			...this.editingSkill,
 			lastUpdated: new Date().toISOString(),
@@ -92,7 +92,7 @@ export class SkillsTab extends SettingsTab {
 	}
 
 	async exportSkills() {
-		const storage = getSitegeistStorage();
+		const storage = getLocalgeistStorage();
 		const allSkills = await storage.skills
 			.list()
 			.then((list) =>
@@ -132,7 +132,7 @@ export class SkillsTab extends SettingsTab {
 				this.importedSkills = imported;
 
 				// Check for conflicts
-				const storage = getSitegeistStorage();
+				const storage = getLocalgeistStorage();
 				const conflicts: { skill: Skill; selected: boolean }[] = [];
 
 				for (const skill of imported) {
@@ -158,7 +158,7 @@ export class SkillsTab extends SettingsTab {
 	}
 
 	async performImport(skills: Skill[]) {
-		const storage = getSitegeistStorage();
+		const storage = getLocalgeistStorage();
 
 		// Filter out skills that are in conflicts and not selected
 		const conflictNames = new Set(this.importConflicts.filter((c) => !c.selected).map((c) => c.skill.name));

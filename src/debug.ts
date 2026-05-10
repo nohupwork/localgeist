@@ -5,7 +5,7 @@ import { icon } from "@mariozechner/mini-lit/dist/icons.js";
 import { Switch } from "@mariozechner/mini-lit/dist/Switch.js";
 import { html, render } from "lit";
 import { ArrowLeft, Bug, MousePointer2, Play, Sparkles } from "lucide";
-import { SitegeistAppStorage } from "./storage/app-storage.js";
+import { LocalgeistAppStorage } from "./storage/app-storage.js";
 import "./debug/ReplPanel.js";
 import { askUserWhichElementTool } from "./tools/ask-user-which-element.js";
 
@@ -22,7 +22,7 @@ const models = [
 ];
 
 // Initialize AppStorage so tools relying on localgeist storage can operate in debug page
-const storage = new SitegeistAppStorage();
+const storage = new LocalgeistAppStorage();
 setAppStorage(storage);
 
 const TEST_PROMPTS: TestPrompt[] = [

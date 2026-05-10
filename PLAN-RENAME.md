@@ -181,6 +181,8 @@ Class/function renames and import updates. TypeScript catches broken imports; cu
 - `import { SitegeistAppStorage }` → `import { LocalgeistAppStorage }`
 - `new SitegeistAppStorage()` → `new LocalgeistAppStorage()`
 
+**Status:** DONE. `npm run check` and `npm run build` pass. Remaining references are Phase 3 (i18n).
+
 ## Phase 3: i18n (Care Required)
 
 **File:** `src/utils/i18n-extension.ts`
