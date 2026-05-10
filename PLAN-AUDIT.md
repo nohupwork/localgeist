@@ -52,23 +52,9 @@ All tools now use explicit `AgentToolResult<T>` return types and `AgentToolUpdat
 
 ---
 
-### 3. Direct `chrome.storage.local` access
+### 3. Direct `chrome.storage.local` access — FIXED (780f192)
 
-**Issue:** `debuggerMode` and `showJsonMode` use `chrome.storage.local` directly instead of `storage.settings` (IndexedDB). All other settings (`proxy.enabled`, `proxy.url`, `lastUsedModel`) use the settings store.
-
-**Locations:**
-
-| File | Key | Operation |
-|---|---|---|
-| `sidepanel.ts:390` | `debuggerMode` | Read |
-| `sidepanel.ts:1036` | `showJsonMode` | Read |
-| `debug.ts:70-81` | `debuggerMode`, `showJsonMode` | Read + Write (toggle) |
-
-**Note:** `background.ts` uses `chrome.storage.session` for sidepanel state and session locks — this is correct (session storage is ephemeral, appropriate for UI state).
-
-**Fix:** Migrate both keys to `storage.settings.get()`/`storage.settings.set()` for consistency.
-
-**Risk:** Low — works fine as-is, purely organizational. Deferred.
+Migrated `debuggerMode` and `showJsonMode` to `storage.settings`. All settings now use the unified IndexedDB store.
 
 ---
 
@@ -142,7 +128,9 @@ grep -rn "prepareArguments" src/tools/ --include="*.ts"
 
 **Fixed (f63b50e):** Added `timestamp: Date.now()` to `NavigationMessage` at creation time, matching `UserMessage`/`ToolResultMessage` pattern. Transformer now passes `timestamp: nav.timestamp` during conversion.
 
-**Remaining TBD:** Dead `continue` type in `custom-messages.ts` — defined but never instantiated. Discuss before removal.
+**Remaining:** Dead `continue` type removed — see below.
+
+**`ContinueMessage` removal rationale:** The `continue` message type was planned as a button-based way to resume LLM output (e.g. after truncation or mid-task). However, the user can already achieve identical results by typing "Please continue" as a normal prompt — the LLM sees full conversation history and continues naturally. A dedicated `continue` message type would be pure UX sugar with no functional benefit, requiring a UI button, message handling, and edge case logic for no gain. Removal was the better path.
 
 **Comparison of `browserMessageTransformer` vs pi-web-ui `defaultConvertToLlm`:**
 
@@ -166,38 +154,16 @@ grep -rn "prepareArguments" src/tools/ --include="*.ts"
 
 ---
 
-### 11. Custom provider handling — TBD: investigate root cause
+### 11. Custom provider handling — FIXED
 
-**Issue:** `getApiKey()` in `sidepanel.ts` checks `storage.providerKeys.get(provider)` first (cloud providers), then falls back to `storage.customProviders.getAll()` for custom/local providers. In practice, step 2 fails to find custom providers, requiring users to enter a dummy API key so step 1 matches instead.
+**Root cause:** `getApiKey()` only matched on `p.name`, missing cases where the model's provider string was set to `p.type`. Also returned empty string `""` for providers without keys, which pi-ai provider implementations reject as falsy.
 
-**Workaround:** Enter any dummy value in the API Key field when setting up a local provider (documented in `known-issues.md`).
+**Fixes applied:**
+- Match on `p.name || p.type` (aligns with `onApiKeyRequired` and how pi-web-ui constructs model provider strings)
+- Return `"local"` placeholder instead of `""` for keyless providers
+- Verified working with runtime debug logging
 
-**`getApiKey` flow:**
-```ts
-getApiKey: async (provider: string) => {
-    // 1. Cloud provider keys
-    const stored = await storage.providerKeys.get(provider);
-    if (stored) return resolveApiKey(stored, provider, storage.providerKeys, proxyUrl);
-
-    // 2. Custom/local providers — FAILS HERE
-    const customProviders = await storage.customProviders.getAll();
-    const custom = customProviders.find((p) => p.name === provider);
-    if (custom) return custom.apiKey || "";
-
-    return undefined; // → "No API key for provider" error
-}
-```
-
-**Suspected root causes (to investigate):**
-- **Timing issue** — `customProviders.getAll()` may return empty on first call before store initialization completes
-- **Name mismatch** — custom provider `name` field may not match the `provider` string (e.g., `"llama-server"` vs `"llama.cpp"`)
-- **Provider name format** — `provider` string may include extra qualifiers
-
-**Investigation needed:**
-- Check what `storage.customProviders.getAll()` actually returns at runtime
-- Compare `p.name` values against the `provider` string passed to `getApiKey()`
-- Check `CustomProvidersStore` implementation in pi-web-ui
-- Check if `resolveApiKey` in pi-agent-core has changed behavior
+**Commits:** `3bd74ab`, `336974a`, `2705ee9`
 
 ---
 
@@ -258,10 +224,10 @@ grep -rn "terminate" src/tools/ --include="*.ts"
 | Priority | Area | Reason |
 |---|---|---|
 | **Done** | #1 Tool return types | Fixed (892b40b) |
+| **Done** | #3 chrome.storage.local | Fixed (780f192) |
 | **Done** | #4 Subscribe typing | Fixed (892b40b) |
-| **Done** | #10 Message transformer | Reviewed, no issues. Two TBDs: dead `continue` type, missing `timestamp` on navigation conversion |
-| **Medium** | #3 chrome.storage.local | Inconsistency with stores |
-| **Medium** | #11 Custom provider handling | User-facing workaround |
+| **Done** | #10 Message transformer | Reviewed. Fixed timestamp (f63b50e). TBD: dead `continue` type |
+| **Done** | #11 Custom provider handling | Fixed (3bd74ab, 336974a, 2705ee9) |
 | **Low** | #2 state.messages assignment | Bulk operation, likely correct |
 | **Low** | #5 as any casts | Accepted limitation |
 | **Low** | #6 executionMode | Optimization, not correctness |
