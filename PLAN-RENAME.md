@@ -238,10 +238,6 @@ These are internal identifiers for `chrome.userScripts` and DOM elements. They c
 - `Sitegeist Details` → `localgeist Details`
 - `Sitegeist icon` → `localgeist icon`
 
-**File:** `SCRIPT_CANCELLATION.md`
-- **Archive this file** — it documents the old Promise wrapping approach which was removed. Current implementation is flag-based only. Code examples are stale.
-- Move to `archive/SCRIPT_CANCELLATION.md`
-
 **File:** `CHANGELOG.md`
 - Add entry under `## [Unreleased]` → `### Changed`: `Renamed project to localgeist (all references, UI, manifests, code)`
 - Do not modify historical entries
