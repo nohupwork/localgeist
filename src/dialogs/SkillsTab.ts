@@ -106,7 +106,7 @@ export class SkillsTab extends SettingsTab {
 		const url = URL.createObjectURL(blob);
 		const a = document.createElement("a");
 		a.href = url;
-		a.download = `sitegeist-skills-${new Date().toISOString().split("T")[0]}.json`;
+		a.download = `localgeist-skills-${new Date().toISOString().split("T")[0]}.json`;
 		a.click();
 		URL.revokeObjectURL(url);
 	}

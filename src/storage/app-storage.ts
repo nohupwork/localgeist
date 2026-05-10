@@ -40,7 +40,7 @@ export class SitegeistAppStorage extends BaseAppStorage {
 
 		// 3. Create backend with all configs
 		const backend = new IndexedDBStorageBackend({
-			dbName: "sitegeist-storage",
+			dbName: "localgeist-storage",
 			version: 3, // Increment version to add custom-providers store
 			stores: configs,
 		});

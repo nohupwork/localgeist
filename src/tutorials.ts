@@ -1,7 +1,7 @@
 export const tutorials = [
 	{
-		label: "What is Sitegeist?",
-		prompt: `You are about to help a non-technical user understand Sitegeist through an interactive tutorial. Guide them step-by-step through Sitegeist's capabilities.
+		label: "What is localgeist?",
+		prompt: `You are about to help a non-technical user understand localgeist through an interactive tutorial. Guide them step-by-step through localgeist's capabilities.
 
 **CRITICAL RULES:**
 - Keep explanations SHORT (2-3 sentences max)

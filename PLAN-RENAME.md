@@ -120,6 +120,8 @@ Display text, comments, manifest. No code references affected.
 
 **Note:** Database name change orphans existing IndexedDB data. Acceptable — all current data is from testing.
 
+**Status:** DONE. `npm run check` and `npm run build` pass. Remaining references in affected files are Phase 2 items (class/function names).
+
 ## Phase 2: Internal Names (Code)
 
 Class/function renames and import updates. TypeScript catches broken imports; custom element mismatches may only show at runtime.

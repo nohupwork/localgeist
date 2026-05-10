@@ -2,7 +2,7 @@ import type { LockedSessionsMessage, LockResultMessage, SidepanelToBackgroundMes
 
 const WINDOW_ID_NONE = chrome.windows.WINDOW_ID_NONE;
 
-// Called when Sitegeist icon is clicked - opens sidepanel for current tab
+// Called when localgeist icon is clicked - opens sidepanel for current tab
 chrome.action.onClicked.addListener((tab: chrome.tabs.Tab) => {
 	const tabId = tab?.id;
 	if (tab.windowId !== undefined && tab.windowId !== WINDOW_ID_NONE) {
