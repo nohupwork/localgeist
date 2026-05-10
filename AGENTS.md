@@ -86,7 +86,6 @@ Load `dist-chrome/` as unpacked extension in Chrome/Edge. Enable "Allow user scr
 ## Known Issues
 
 See `known-issues.md` for:
-- Dummy API key requirement for local providers
 - Chat output flash/collapse UI bug
 - Context size showing default values
 
