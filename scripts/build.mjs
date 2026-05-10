@@ -43,7 +43,7 @@ const buildOptions = {
 		global: "globalThis",
 	},
 	inject: [join(packageRoot, "scripts/process-shim.js")],
-	// Force all mini-lit and lit imports to resolve to sitegeist's node_modules
+	// Force all mini-lit and lit imports to resolve to localgeist's node_modules
 	// Node.js builtins are aliased to an empty shim — pi-agent-core bundles
 	// server-side code (session storage, shell utils) that is never executed
 	// in the browser. Using alias (not external) so esbuild replaces the import

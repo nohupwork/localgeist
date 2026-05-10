@@ -329,6 +329,8 @@ Documentation in `docs/` and build scripts. Code examples and paths must reflect
 
 **Keep:** `CREDITS.md` entirely (historical attribution, per plan rules)
 
+**Status:** DONE. `npm run check` and `npm run build` pass. Zero `sitegeist`/`Sitegeist` references remain in `docs/` and `scripts/`.
+
 ## Execution Order
 
 1. Phase 0 (page context functions) — simple string replacements, no imports
