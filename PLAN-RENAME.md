@@ -331,6 +331,13 @@ Documentation in `docs/` and build scripts. Code examples and paths must reflect
 
 **Status:** DONE. `npm run check` and `npm run build` pass. Zero `sitegeist`/`Sitegeist` references remain in `docs/` and `scripts/`.
 
+## Phase 5c: Stray References
+
+**File:** `.gitignore`
+- `sitegeist-latest.zip` → `localgeist-latest.zip`
+
+**Status:** PENDING.
+
 ## Execution Order
 
 1. Phase 0 (page context functions) — simple string replacements, no imports
