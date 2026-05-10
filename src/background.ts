@@ -120,6 +120,28 @@ chrome.runtime.onConnect.addListener((port: chrome.runtime.Port) => {
 				};
 				port.postMessage(response);
 			});
+		} else if (msg.type === "releaseLock") {
+			const { sessionId: relSessionId, windowId: relWindowId } = msg;
+
+			// Read current locks from persistent storage
+			chrome.storage.session.get(SESSION_LOCKS_KEY, (data) => {
+				const sessionLocks: Record<string, number> = (data[SESSION_LOCKS_KEY] as Record<string, number>) || {};
+				const ownerWindowId = sessionLocks[relSessionId];
+
+				// Only allow the lock owner to release it
+				const success = ownerWindowId === relWindowId;
+
+				if (success) {
+					delete sessionLocks[relSessionId];
+					chrome.storage.session.set({ [SESSION_LOCKS_KEY]: sessionLocks });
+				}
+
+				port.postMessage({
+					type: "releaseLockResult",
+					sessionId: relSessionId,
+					success,
+				} as const);
+			});
 		}
 	});
 

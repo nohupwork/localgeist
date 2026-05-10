@@ -47,6 +47,26 @@ export interface LockedSessionsMessage {
 	locks: Record<string, number>; // sessionId -> windowId
 }
 
+/**
+ * Request to release a session lock.
+ * Sent from sidepanel to background.
+ */
+export interface ReleaseLockMessage {
+	type: "releaseLock";
+	sessionId: string;
+	windowId: number;
+}
+
+/**
+ * Response to releaseLock request.
+ * Sent from background to sidepanel.
+ */
+export interface ReleaseLockResultMessage {
+	type: "releaseLockResult";
+	sessionId: string;
+	success: boolean;
+}
+
 // ============================================================================
 // DERIVED TYPES
 // ============================================================================
@@ -57,7 +77,8 @@ export interface LockedSessionsMessage {
  */
 export type MessagePair =
 	| { request: AcquireLockMessage; response: LockResultMessage }
-	| { request: GetLockedSessionsMessage; response: LockedSessionsMessage };
+	| { request: GetLockedSessionsMessage; response: LockedSessionsMessage }
+	| { request: ReleaseLockMessage; response: ReleaseLockResultMessage };
 
 /**
  * All messages that can be sent from sidepanel to background.
@@ -87,6 +108,7 @@ export const REQUEST_TO_RESPONSE_TYPE: Record<
 > = {
 	acquireLock: "lockResult",
 	getLockedSessions: "lockedSessions",
+	releaseLock: "releaseLockResult",
 };
 
 // ============================================================================

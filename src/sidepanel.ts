@@ -339,18 +339,17 @@ const updateNewSessionUrl = () => {
 	window.history.replaceState({}, "", url);
 };
 
-const SESSION_LOCKS_KEY = "session_locks";
-
 const releaseSessionLock = async (sessionId: string | undefined) => {
 	if (!sessionId) return;
 
 	try {
-		const data = await chrome.storage.session.get(SESSION_LOCKS_KEY);
-		const sessionLocks: Record<string, number> = (data[SESSION_LOCKS_KEY] as Record<string, number>) || {};
-
-		if (sessionLocks[sessionId] === currentWindowId) {
-			delete sessionLocks[sessionId];
-			await chrome.storage.session.set({ [SESSION_LOCKS_KEY]: sessionLocks });
+		const response = await port.sendMessage({
+			type: "releaseLock",
+			sessionId,
+			windowId: currentWindowId,
+		});
+		if (!response.success) {
+			console.warn("Failed to release lock for session", sessionId);
 		}
 	} catch (err) {
 		console.error("Failed to release session lock:", err);
