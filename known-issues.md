@@ -1,5 +1,27 @@
 # Known Issues
 
+## Navigation Tool `prepareArguments` Breaks Normal Use
+
+**Symptom:** "Invalid navigation parameters" on every navigation attempt, causing the LLM to loop through failed attempts.
+
+**Cause:** `prepareArguments` transformation in navigate tool was wrapping correct `{ url: "..." }` into incorrect `{ navigate: { url: "..." } }`.
+
+**Fix:** Removed broken `prepareArguments` from navigate tool (`3115f65`).
+
+**Status:** Fixed, awaiting user verification.
+
+## Model Selection Resets on New Chat
+
+**Symptom:** Starting a new chat resets the model selector, opening the Settings page with provider options instead of restoring the previously selected local model.
+
+**Suspected cause:** `lastUsedModel` persistence may be affected by the settings store migration (chrome.storage.local → IndexedDB). Custom providers may not be loaded when model is restored.
+
+**Reproduction:** Select a local provider model, start a new chat → Settings page opens.
+
+**Status:** Needs investigation. Confirm whether saved model is lost or custom provider lookup fails during restore.
+
+---
+
 ## Chat Output Flashes Then Collapses
 
 **Symptom:** After the model finishes responding, the output text flashes, then collapses. Only the thinking block remains visible. The actual response text is only visible after navigating away and back to the conversation (via the history tab).
