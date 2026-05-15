@@ -81,6 +81,8 @@ Future goal: reduce dependency footprint by replacing upstream SDK choices with 
 
 **Upstream context:** pi is a general-purpose library that supports all providers. localgeist only needs local providers. We can diverge where it simplifies things.
 
+**Known upstream bug:** `discoverLlamaCppModels()` reads `model.context_length` (undefined) instead of `model.meta.n_ctx` → falls back to 8192. Cosmetic only (displayed context window in ModelSelector), no functional impact. Fix: one line in `model-discovery.ts`. Address when debloating — either PR upstream or fix in local fork.
+
 ## Tutorial Pills → Skills Integration
 
 **Future plan:** Link tutorial pills to skills — pills should trigger saved skills rather than ad-hoc prompts. This will be a localgeist-specific feature.
