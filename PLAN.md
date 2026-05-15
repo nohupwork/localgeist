@@ -33,21 +33,6 @@ localgeist is a local-first fork of [Sitegeist](https://github.com/badlogic/site
 - Renamed project to localgeist (all references, UI, manifests, code, docs)
 - Archived `site/` directory (marketing site no longer needed)
 
-## Archive site/
-
-The `site/` directory (marketing site) is no longer needed. Project will be hosted on GitHub only.
-
-**Files to archive:**
-- `site/` — entire directory (src, infra, config, scripts)
-- `site/run.sh` — deploy script
-- `scripts/dev-server.mjs` — local dev server for site
-
-**Cleanup:**
-- Remove `cd site && npm run check` from `package.json` `check` script
-- Remove site references from `package.json` `dev` script
-- Remove `site/dist/` from `.gitignore`
-- Update `AGENTS.md` project structure if referenced
-
 ## Prioritize Local Models in UI
 
 Make local/custom providers the default and primary focus of the extension.
