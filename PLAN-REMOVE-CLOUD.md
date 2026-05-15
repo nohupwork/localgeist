@@ -4,6 +4,18 @@
 
 Remove all cloud provider support. localgeist is local-first — only custom/local providers (Ollama, llama.cpp, vLLM, LM Studio, OpenAI-compatible).
 
+## Phase 0: Fix Auto-Select for Custom Providers
+
+`selectDefaultModelForAvailableProvider()` in `src/sidepanel.ts` currently only selects models for cloud providers (`DEFAULT_MODELS` mapping + `getModels()` from pi-ai). Custom providers are in the list but their models require a network `discoverModels()` call that is never made.
+
+**File:** `src/sidepanel.ts`
+- Add a third step after the cloud fallback: for each provider in the list, check if it's a custom provider with auto-discovery type (ollama, llama.cpp, vllm, lmstudio)
+- If so, call `discoverModels()` and select the first available model
+- Save to `lastUsedModel` and update UI (same as existing cloud path)
+- Import `discoverModels` from pi-web-ui (already available via the build alias)
+
+**Result:** When user adds a custom provider and models are discovered, the first model is auto-selected — same behavior cloud providers get from `DEFAULT_MODELS`.
+
 ## Phase 1: Settings Tab
 
 Replace `ProvidersModelsTab` (upstream, shows cloud + custom) with local `CustomProvidersTab` (custom only).
@@ -72,11 +84,12 @@ Move `src/oauth/` to `archive/oauth/` — cloud-only code (Anthropic, OpenAI, Gi
 
 ## Execution Order
 
-1. Phase 1 (Settings Tab) — create CustomProvidersTab, verify settings dialog works
-2. Phase 2 (sidepanel.ts Cleanup) — simplify functions, remove cloud imports
-3. Phase 3 (Archive OAuth) — move directory, verify no broken imports
-4. Phase 4 (Welcome Dialog) — update text
-5. Phase 5 (Documentation) — update README, CHANGELOG, PLAN
+1. Phase 0 (Auto-Select) — fix custom provider model auto-select, verify first model is picked on init
+2. Phase 1 (Settings Tab) — create CustomProvidersTab, verify settings dialog works
+3. Phase 2 (sidepanel.ts Cleanup) — simplify functions, remove cloud imports
+4. Phase 3 (Archive OAuth) — move directory, verify no broken imports
+5. Phase 4 (Welcome Dialog) — update text
+6. Phase 5 (Documentation) — update README, CHANGELOG, PLAN
 
 ## Pain Points
 
