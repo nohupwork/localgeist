@@ -8,13 +8,14 @@ import {
 } from "@earendil-works/pi-web-ui";
 import { Select } from "@mariozechner/mini-lit/dist/Select.js";
 import { html, type TemplateResult } from "lit";
-import { state } from "lit/decorators.js";
+import { customElement, state } from "lit/decorators.js";
 import { discoverModels } from "../utils/discover-models.js";
 
 /**
  * Settings tab showing only custom/local providers.
  * Forked from upstream ProvidersModelsTab — cloud providers section removed.
  */
+@customElement("localgeist-providers-tab")
 export class CustomProvidersTab extends SettingsTab {
 	@state() private customProviders: CustomProvider[] = [];
 	@state() private providerStatus: Map<
