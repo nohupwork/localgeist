@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="media/hero.png" alt="localgeist" width="400">
+  <img src="media/hero.webp" alt="localgeist" width="400">
 </p>
 
 An AI assistant that lives in your browser sidebar. Built for collaboration, not autonomy theater. You guide, it executes.

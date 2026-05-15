@@ -12,6 +12,10 @@
 - `DEFAULT_MODELS` cloud provider mapping
 - `ProvidersModelsTab` from pi-web-ui (replaced with local `CustomProvidersTab`)
 
+### Changed
+
+- Replaced `media/hero.png` with `media/hero.webp` (887K -> 42K)
+
 ### Added
 
 - Gmail automation skill: 15 functions for composing, reading, replying, searching, and managing emails on `mail.google.com`
