@@ -38,37 +38,15 @@ localgeist is a local-first fork of [Sitegeist](https://github.com/badlogic/site
 
 ## Deferred
 
-### REPL Safeguards
-
-`buildWrapperCode()` accepts an `enableSafeguards` parameter (always `false`) with a placeholder comment. No implementation exists. Not a priority.
-
 ### Persistent Storage Request
 
 `PersistentStorageDialog.request()` is commented out in `sidepanel.ts`. Only needed if users hit storage limits.
-
-### Promise Wrapping for Script Cancellation
-
-The hja branch includes a Promise constructor wrapper that makes every `await` a cancellation checkpoint. This was removed because it broke `new Promise()` in page contexts. Re-implementing with a safer approach (namespaced wrapper, or restoring original Promise more carefully) would make cancellation automatic rather than requiring explicit `__localgeist_yield()` calls.
-
-See `archive/SCRIPT_CANCELLATION.md` for detailed analysis.
 
 ### `executionMode` on Tools
 
 The `AgentTool` interface supports `executionMode?: "sequential" | "parallel"` for per-tool override. Currently all tools use the Agent-level default (`toolExecution: "sequential"`). With a single LLM backend, parallel execution provides no benefit.
 
 See `DEFERRED.md` for details.
-
-## Debloating
-
-Future goal: reduce dependency footprint by replacing upstream SDK choices with lighter alternatives where possible.
-
-**LM Studio SDK (`@lmstudio/sdk`):** Upstream pi uses WebSocket-based LM Studio SDK for model discovery. LM Studio's built-in server exposes OpenAI-compatible `/v1/models` — a simple `fetch()` call replaces the SDK entirely. Removing this cuts a dependency and simplifies the discovery code.
-
-**Ollama SDK (`ollama/browser`):** Ollama's `/api/tags` and `/api/show` endpoints are REST-based. The SDK is convenience, not required. Could replace with `fetch()` calls, though Ollama's response format differs from OpenAI and needs mapping.
-
-**Upstream context:** pi is a general-purpose library that supports all providers. localgeist only needs local providers. We can diverge where it simplifies things.
-
-**Known upstream bug:** `discoverLlamaCppModels()` reads `model.context_length` (undefined) instead of `model.meta.n_ctx` → falls back to 8192. Cosmetic only (displayed context window in ModelSelector), no functional impact. Fix: one line in `model-discovery.ts`. Address when debloating — either PR upstream or fix in local fork.
 
 ## Tutorial Pills → Skills Integration
 
