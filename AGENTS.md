@@ -22,7 +22,7 @@ Localgeist is a local-first fork of [Sitegeist](https://github.com/badlogic/site
 All tools implement `prepareArguments` to normalize model-specific arg formats before TypeBox schema validation. Current transformations are defensive scaffolding based on upstream pi patterns (coding-agent edit tool). They are **not yet synced with observed model failures** — refine when specific models send unexpected arg formats. See `PLAN-AUDIT.md` #9.
 
 ## Dependencies
-- `@mariozechner/mini-lit`, `@earendil-works/pi-ai`, `@earendil-works/pi-web-ui`, `@earendil-works/pi-agent-core` are linked via `file:` to sibling repos `../mini-lit` and `../pi`
+- `@mariozechner/mini-lit`, `@earendil-works/pi-ai`, `@earendil-works/pi-web-ui`, `@earendil-works/pi-agent-core` are installed from npm
 - These are upstream dependencies — do not modify them
 
 ## Changelog
@@ -57,21 +57,10 @@ Use these sections under `## [Unreleased]`:
 
 ## Building and Running
 
-Requires sibling repos:
-
-```
-parent/
-  mini-lit/
-  pi/
-  localgeist/    (this project)
-```
-
 ### First-time setup
 
 ```bash
-cd ../mini-lit  && npm install && npm run build
-cd ../pi       && npm install && npm run build
-cd ../localgeist && npm install && npm run build
+npm install && npm run build
 ```
 
 ### Day-to-day

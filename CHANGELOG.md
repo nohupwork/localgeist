@@ -1,13 +1,14 @@
 # Changelog
 
-## [Unreleased]
+## [1.1.7] - 2026-05-15
 
 ### Breaking Changes
 
-- Migrated pi dependencies from `@mariozechner/pi-*` (pi-mono) to `@earendil-works/pi-*` (pi). Requires `../pi` sibling repo.
+- Migrated pi dependencies from `@mariozechner/pi-*` (pi-mono) to `@earendil-works/pi-*` (pi).
 
 ### Removed
 
+- `../mini-lit` and `../pi` sibling repo requirement — dependencies now installed from npm
 - Cloud provider support (OAuth, API key dialogs, cloud model list)
 - `DEFAULT_MODELS` cloud provider mapping
 - `ProvidersModelsTab` from pi-web-ui (replaced with local `CustomProvidersTab`)

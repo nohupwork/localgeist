@@ -20,26 +20,13 @@ Requires Chrome 141+ or Edge equivalent.
 
 ## Development
 
-Clone this repo plus its sibling dependencies into the same parent directory:
-
-```
-parent/
-  mini-lit/          # https://github.com/badlogic/mini-lit
-  pi/                # https://github.com/earendil-works/pi
-  localgeist/         # this repo
-```
-
-Install dependencies in each repo:
+Install dependencies:
 
 ```bash
-(cd ../mini-lit && npm install)
-(cd ../pi && npm install)
 npm install
 ```
 
 `npm install` sets up the Husky pre-commit hook automatically.
-
-The sibling repos `../mini-lit` and `../pi` are upstream dependencies. Do not modify them — they are referenced here for build resolution only.
 
 ### Loading the extension
 

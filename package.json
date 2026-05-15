@@ -1,6 +1,6 @@
 {
 	"name": "localgeist",
-	"version": "0.1.0",
+	"version": "1.1.7",
 	"private": true,
 	"description": "AI-powered browser extension for web navigation and interaction",
 	"type": "module",
@@ -16,10 +16,10 @@
 	},
 	"dependencies": {
 		"@mariozechner/jailjs": "^0.1.0",
-		"@mariozechner/mini-lit": "file:../mini-lit",
-		"@earendil-works/pi-agent-core": "file:../pi/packages/agent",
-		"@earendil-works/pi-ai": "file:../pi/packages/ai",
-		"@earendil-works/pi-web-ui": "file:../pi/packages/web-ui",
+		"@mariozechner/mini-lit": "^0.2.1",
+		"@earendil-works/pi-agent-core": "^0.74.0",
+		"@earendil-works/pi-ai": "^0.74.0",
+		"@earendil-works/pi-web-ui": "^0.74.0",
 		"chart.js": "^4.5.1",
 		"docx-preview": "^0.3.7",
 		"fuse.js": "^7.1.0",
