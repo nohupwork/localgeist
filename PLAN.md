@@ -71,6 +71,16 @@ The `AgentTool` interface supports `executionMode?: "sequential" | "parallel"` f
 
 See `DEFERRED.md` for details.
 
+## Debloating
+
+Future goal: reduce dependency footprint by replacing upstream SDK choices with lighter alternatives where possible.
+
+**LM Studio SDK (`@lmstudio/sdk`):** Upstream pi uses WebSocket-based LM Studio SDK for model discovery. LM Studio's built-in server exposes OpenAI-compatible `/v1/models` — a simple `fetch()` call replaces the SDK entirely. Removing this cuts a dependency and simplifies the discovery code.
+
+**Ollama SDK (`ollama/browser`):** Ollama's `/api/tags` and `/api/show` endpoints are REST-based. The SDK is convenience, not required. Could replace with `fetch()` calls, though Ollama's response format differs from OpenAI and needs mapping.
+
+**Upstream context:** pi is a general-purpose library that supports all providers. localgeist only needs local providers. We can diverge where it simplifies things.
+
 ## Tutorial Pills → Skills Integration
 
 **Future plan:** Link tutorial pills to skills — pills should trigger saved skills rather than ad-hoc prompts. This will be a localgeist-specific feature.
