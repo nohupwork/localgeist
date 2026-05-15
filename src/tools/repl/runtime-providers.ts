@@ -180,7 +180,6 @@ export class BrowserJsRuntimeProvider implements SandboxRuntimeProvider {
 		const wrapperCode = buildWrapperCode(
 			message.code,
 			skillLibrary,
-			false, // disable safeguards for now
 			[pageConsoleProvider, ...this.sharedProviders],
 			sandboxId,
 			parsedArgs,

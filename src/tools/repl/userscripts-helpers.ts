@@ -259,21 +259,17 @@ async function wrapperIIFE() {
 }
 
 /**
- * Build the wrapper code by combining safeguards, skill library, providers, and user code
+ * Build the wrapper code by combining skill library, providers, and user code
  */
 export function buildWrapperCode(
 	userCode: string,
 	skillLibrary: string,
-	_enableSafeguards: boolean,
 	providers: SandboxRuntimeProvider[],
 	sandboxId: string,
 	args?: any[],
 ): string {
 	// Start with wrapper function (will be made into IIFE below)
 	let code = wrapperIIFE.toString();
-
-	// Inject safeguards at the beginning if enabled (not implemented yet)
-	// if (enableSafeguards) { ... }
 
 	// Build provider injections (bridge + data + runtimes)
 	const bridgeCode = RuntimeMessageBridge.generateBridgeCode({
