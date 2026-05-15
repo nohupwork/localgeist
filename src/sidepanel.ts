@@ -16,7 +16,6 @@ import {
 	createExtractDocumentTool,
 	createStreamFn,
 	ModelSelector,
-	ProvidersModelsTab,
 	ProxyTab,
 	SettingsDialog,
 	// PersistentStorageDialog,
@@ -27,6 +26,7 @@ import { html, render } from "lit";
 import { History, Plus, Settings } from "lucide";
 import { AboutTab } from "./dialogs/AboutTab.js";
 import { CostsTab } from "./dialogs/CostsTab.js";
+import { CustomProvidersTab } from "./dialogs/CustomProvidersTab.js";
 import { SessionCostDialog } from "./dialogs/SessionCostDialog.js";
 import { LocalgeistSessionListDialog } from "./dialogs/SessionListDialog.js";
 import { SkillsTab } from "./dialogs/SkillsTab.js";
@@ -208,7 +208,7 @@ async function hasAnyApiKey(): Promise<boolean> {
 function openApiKeysDialog(): Promise<void> {
 	return new Promise((resolve) => {
 		SettingsDialog.open(
-			[new ProvidersModelsTab(), new CostsTab(), new SkillsTab(), new ProxyTab(), new AboutTab()],
+			[new CustomProvidersTab(), new CostsTab(), new SkillsTab(), new ProxyTab(), new AboutTab()],
 			resolve,
 		);
 	});
@@ -862,7 +862,7 @@ const renderApp = () => {
 						children: icon(Settings, "sm"),
 						onClick: () =>
 							SettingsDialog.open([
-								new ProvidersModelsTab(),
+								new CustomProvidersTab(),
 								new CostsTab(),
 								new SkillsTab(),
 								new ProxyTab(),

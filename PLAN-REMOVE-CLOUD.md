@@ -32,6 +32,8 @@ Replace `ProvidersModelsTab` (upstream, shows cloud + custom) with local `Custom
 - Replace `import { ProvidersModelsTab }` with `import { CustomProvidersTab }`
 - Replace all `new ProvidersModelsTab()` with `new CustomProvidersTab()`
 
+**Status:** DONE. `npm run check` and `npm run build` pass. `ProvidersModelsTab` fully replaced.
+
 ## Phase 2: sidepanel.ts Cleanup
 
 **Remove:**
