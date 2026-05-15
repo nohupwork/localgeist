@@ -65,6 +65,8 @@ Move `src/oauth/` to `archive/oauth/` — cloud-only code (Anthropic, OpenAI, Gi
 
 **Update imports:** Nothing in remaining code should reference `./oauth/` after Phase 2.
 
+**Status:** DONE. `npm run check` and `npm run build` pass. `src/oauth/` moved to `archive/oauth/`, zero references remain in `src/`.
+
 ## Phase 4: Welcome Dialog
 
 **File:** `src/dialogs/WelcomeSetupDialog.ts`
