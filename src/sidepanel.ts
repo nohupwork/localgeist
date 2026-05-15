@@ -9,7 +9,7 @@ import {
 	type AgentState,
 	type AgentTool,
 } from "@earendil-works/pi-agent-core";
-import { getModel, getModels, type Model } from "@earendil-works/pi-ai";
+import type { Model } from "@earendil-works/pi-ai";
 import {
 	type AutoDiscoveryProviderType,
 	ChatPanel,
@@ -40,7 +40,7 @@ import {
 } from "./messages/NavigationMessage.js";
 import { registerUserMessageRenderer } from "./messages/UserMessageRenderer.js";
 import { createWelcomeMessage, registerWelcomeRenderer } from "./messages/WelcomeMessage.js";
-import { isOAuthCredentials, resolveApiKey } from "./oauth/index.js";
+
 import { SYSTEM_PROMPT } from "./prompts/prompts.js";
 import { LocalgeistAppStorage } from "./storage/app-storage.js";
 import { DebuggerTool } from "./tools/debugger.js";
@@ -105,62 +105,8 @@ const recordedCostMessages = new Set<AgentMessage>();
 // Cached auth type label for the current provider
 let authLabel = "";
 
-const DEFAULT_MODELS: Record<string, string> = {
-	"amazon-bedrock": "us.anthropic.claude-opus-4-6-v1",
-	anthropic: "claude-sonnet-4-6",
-	"azure-openai-responses": "gpt-5.2",
-	cerebras: "zai-glm-4.6",
-	"github-copilot": "gpt-4o",
-	google: "gemini-2.5-flash",
-	"google-antigravity": "gemini-3.1-pro-high",
-	"google-gemini-cli": "gemini-2.5-pro",
-	"google-vertex": "gemini-3-pro-preview",
-	groq: "openai/gpt-oss-20b",
-	huggingface: "moonshotai/Kimi-K2.5",
-	"kimi-coding": "kimi-k2-thinking",
-	minimax: "MiniMax-M2.1",
-	"minimax-cn": "MiniMax-M2.1",
-	mistral: "devstral-medium-latest",
-	openai: "gpt-4o-mini",
-	"openai-codex": "gpt-5.1-codex-mini",
-	opencode: "claude-opus-4-6",
-	"opencode-go": "kimi-k2.5",
-	openrouter: "openai/gpt-5.1-codex",
-	"vercel-ai-gateway": "anthropic/claude-opus-4-6",
-	xai: "grok-4-fast-non-reasoning",
-	zai: "glm-4.6",
-};
-
 async function selectDefaultModelForAvailableProvider() {
-	const providers = await getProvidersWithKeys();
-	if (providers.length === 0 || !agent) return;
-
-	// Try each provider with keys and find a default model
-	for (const provider of providers) {
-		const modelId = DEFAULT_MODELS[provider];
-		if (modelId) {
-			const model = getModel(provider as any, modelId);
-			if (model) {
-				agent.state.model = model;
-				await storage.settings.set("lastUsedModel", model);
-				await updateAuthLabel();
-				renderApp();
-				return;
-			}
-		}
-	}
-
-	// If no default found, try the first model for the first provider with a key
-	for (const provider of providers) {
-		const models = getModels(provider as any);
-		if (models.length > 0) {
-			agent.state.model = models[0];
-			await storage.settings.set("lastUsedModel", models[0]);
-			await updateAuthLabel();
-			renderApp();
-			return;
-		}
-	}
+	if (!agent) return;
 
 	// Try auto-discovery custom providers (ollama, llama.cpp, vllm, lmstudio)
 	const customProviders = await storage.customProviders.getAll();
@@ -184,23 +130,11 @@ async function selectDefaultModelForAvailableProvider() {
 }
 
 async function getProvidersWithKeys(): Promise<string[]> {
-	const providers = await storage.providerKeys.list();
-	const result: string[] = [];
-	for (const provider of providers) {
-		const key = await storage.providerKeys.get(provider);
-		if (key) result.push(provider);
-	}
-	// Also include custom/local providers
 	const customProviders = await storage.customProviders.getAll();
-	for (const cp of customProviders) {
-		if (!result.includes(cp.name)) result.push(cp.name);
-	}
-	return result;
+	return customProviders.map((cp) => cp.name);
 }
 
 async function hasAnyApiKey(): Promise<boolean> {
-	const cloudProviders = await storage.providerKeys.list();
-	if (cloudProviders.length > 0) return true;
 	const customProviders = await storage.customProviders.getAll();
 	return customProviders.length > 0;
 }
@@ -220,14 +154,9 @@ async function updateAuthLabel() {
 		return;
 	}
 	const provider = agent.state.model.provider;
-	const stored = await storage.providerKeys.get(provider);
-	if (!stored) {
-		authLabel = "";
-	} else if (isOAuthCredentials(stored)) {
-		authLabel = "subscription";
-	} else {
-		authLabel = "api key";
-	}
+	const customProviders = await storage.customProviders.getAll();
+	const isCustom = customProviders.some((p) => p.name === provider);
+	authLabel = isCustom ? "local" : "";
 }
 
 // Export getter for message transformer
@@ -423,22 +352,7 @@ const createAgent = async (initialState?: Partial<AgentState>, shouldSave = true
 			defaultModel = savedModel;
 		} else {
 			// Try to find a default model for a provider the user already has a key for
-			const providersWithKeys = await getProvidersWithKeys();
-			for (const provider of providersWithKeys) {
-				const modelId = DEFAULT_MODELS[provider];
-				if (modelId) {
-					const model = getModel(provider as any, modelId);
-					if (model) {
-						defaultModel = model;
-						break;
-					}
-				}
-			}
 		}
-	}
-	// Final fallback
-	if (!defaultModel && !initialState?.model) {
-		defaultModel = getModel("anthropic", "claude-sonnet-4-6");
 	}
 
 	agent = new Agent({
@@ -457,19 +371,9 @@ const createAgent = async (initialState?: Partial<AgentState>, shouldSave = true
 			return (await storage.settings.get<string>("proxy.url")) || undefined;
 		}),
 		getApiKey: async (provider: string) => {
-			// Check cloud provider keys first
-			const stored = await storage.providerKeys.get(provider);
-			if (stored) {
-				const proxyEnabled = await storage.settings.get<boolean>("proxy.enabled");
-				const proxyUrl = proxyEnabled ? (await storage.settings.get<string>("proxy.url")) || undefined : undefined;
-				return resolveApiKey(stored, provider, storage.providerKeys, proxyUrl);
-			}
-			// Check custom/local providers - any custom provider match returns empty string (no key needed)
 			const customProviders = await storage.customProviders.getAll();
 			const custom = customProviders.find((p) => p.name === provider || p.type === provider);
 			if (custom) {
-				// Return placeholder if no key set — local providers don't need one,
-				// but pi-ai provider implementations reject empty/falsy apiKey
 				return custom.apiKey || "local";
 			}
 			return undefined;
@@ -974,19 +878,10 @@ async function testSteps(): Promise<boolean> {
 	try {
 		const testSteps = JSON.parse(decodeURIComponent(testStepsParam)) as string[];
 
-		// Set model if specified
-		let initialState: Partial<AgentState> | undefined;
-		if (testProvider && testModel) {
-			const model = getModel(testProvider as any, testModel);
-			if (model) {
-				initialState = {
-					systemPrompt: SYSTEM_PROMPT,
-					model,
-				};
-			}
-		}
+		// Debug mode — agent is created without a pre-set model.
+		// Custom provider models are discovered at runtime.
 
-		await createAgent(initialState, false);
+		await createAgent(undefined, false);
 		renderApp();
 
 		// Wait for UI to render

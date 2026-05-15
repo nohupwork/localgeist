@@ -48,6 +48,8 @@ Replace `ProvidersModelsTab` (upstream, shows cloud + custom) with local `Custom
 - `selectDefaultModelForAvailableProvider()` — remove `DEFAULT_MODELS` lookup, pick first model from first custom provider
 - `updateAuthLabel()` — remove OAuth credentials branch, only handle plain API keys and custom providers
 
+**Status:** DONE. `npm run check` and `npm run build` pass. All cloud imports and functions removed.
+
 ## Phase 3: Archive OAuth
 
 Move `src/oauth/` to `archive/oauth/` — cloud-only code (Anthropic, OpenAI, GitHub Copilot, Google Gemini OAuth flows).
