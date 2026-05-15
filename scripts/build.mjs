@@ -55,6 +55,10 @@ const buildOptions = {
 		"lit/decorators.js": join(packageRoot, "node_modules/lit/decorators.js"),
 		"lit/directives/class-map.js": join(packageRoot, "node_modules/lit/directives/class-map.js"),
 		"lit/directives/unsafe-html.js": join(packageRoot, "node_modules/lit/directives/unsafe-html.js"),
+		"@earendil-works/pi-web-ui/dist/utils/model-discovery.js": join(
+			packageRoot,
+			"node_modules/@earendil-works/pi-web-ui/dist/utils/model-discovery.js",
+		),
 		"node:fs": join(packageRoot, "scripts/node-shim.js"),
 		"node:fs/promises": join(packageRoot, "scripts/node-shim.js"),
 		"node:crypto": join(packageRoot, "scripts/node-shim.js"),

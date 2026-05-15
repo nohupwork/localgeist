@@ -16,6 +16,8 @@ Remove all cloud provider support. localgeist is local-first — only custom/loc
 
 **Result:** When user adds a custom provider and models are discovered, the first model is auto-selected — same behavior cloud providers get from `DEFAULT_MODELS`.
 
+**Status:** DONE. `npm run check` and `npm run build` pass. Added esbuild alias for pi-web-ui subpath import.
+
 ## Phase 1: Settings Tab
 
 Replace `ProvidersModelsTab` (upstream, shows cloud + custom) with local `CustomProvidersTab` (custom only).

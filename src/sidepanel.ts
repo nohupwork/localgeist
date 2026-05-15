@@ -11,6 +11,7 @@ import {
 } from "@earendil-works/pi-agent-core";
 import { getModel, getModels, type Model } from "@earendil-works/pi-ai";
 import {
+	type AutoDiscoveryProviderType,
 	ChatPanel,
 	createExtractDocumentTool,
 	createStreamFn,
@@ -49,6 +50,7 @@ import { NativeInputEventsRuntimeProvider } from "./tools/NativeInputEventsRunti
 import { isToolNavigating, NavigateTool } from "./tools/navigate.js";
 import { createReplTool } from "./tools/repl/repl.js";
 import { BrowserJsRuntimeProvider, NavigateRuntimeProvider } from "./tools/repl/runtime-providers.js";
+import { discoverModels } from "./utils/discover-models.js";
 import * as port from "./utils/port.js";
 import "./utils/i18n-extension.js";
 import "./utils/live-reload.js";
@@ -157,6 +159,26 @@ async function selectDefaultModelForAvailableProvider() {
 			await updateAuthLabel();
 			renderApp();
 			return;
+		}
+	}
+
+	// Try auto-discovery custom providers (ollama, llama.cpp, vllm, lmstudio)
+	const customProviders = await storage.customProviders.getAll();
+	const autoDiscoveryTypes = new Set(["ollama", "llama.cpp", "vllm", "lmstudio"]);
+	for (const cp of customProviders) {
+		if (!autoDiscoveryTypes.has(cp.type)) continue;
+		try {
+			const models = await discoverModels(cp.type as AutoDiscoveryProviderType, cp.baseUrl, cp.apiKey);
+			if (models.length > 0) {
+				const model = { ...models[0], provider: cp.name };
+				agent.state.model = model;
+				await storage.settings.set("lastUsedModel", model);
+				await updateAuthLabel();
+				renderApp();
+				return;
+			}
+		} catch (error) {
+			console.debug(`Failed to discover models from ${cp.name}:`, error);
 		}
 	}
 }
