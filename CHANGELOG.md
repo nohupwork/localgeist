@@ -6,6 +6,12 @@
 
 - Migrated pi dependencies from `@mariozechner/pi-*` (pi-mono) to `@earendil-works/pi-*` (pi). Requires `../pi` sibling repo.
 
+### Removed
+
+- Cloud provider support (OAuth, API key dialogs, cloud model list)
+- `DEFAULT_MODELS` cloud provider mapping
+- `ProvidersModelsTab` from pi-web-ui (replaced with local `CustomProvidersTab`)
+
 ### Added
 
 - Gmail automation skill: 15 functions for composing, reading, replying, searching, and managing emails on `mail.google.com`
@@ -24,6 +30,8 @@
 
 ### Changed
 
+- Settings Providers tab shows only custom/local providers
+- Auto-selects first available model from custom providers on init
 - Renamed project to localgeist (all references, UI, manifests, code)
 - `@tailwindcss/cli` upgraded from `^4.0.0-beta.14` to `^4.2.0` (stable release)
 - `AboutTab` replaced with minimal placeholder

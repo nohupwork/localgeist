@@ -4,8 +4,8 @@ import { DialogBase } from "@mariozechner/mini-lit/dist/DialogBase.js";
 import { html } from "lit";
 
 /**
- * Shown on first launch when no API keys are configured.
- * Blocks until user clicks OK, then opens the API Keys & OAuth settings.
+ * Shown on first launch when no providers are configured.
+ * Blocks until user clicks OK, then opens the Providers settings.
  */
 export class WelcomeSetupDialog extends DialogBase {
 	private resolvePromise?: () => void;
@@ -28,27 +28,26 @@ export class WelcomeSetupDialog extends DialogBase {
 
 	protected renderContent() {
 		return html`
-			${DialogContent({
-				className: "flex flex-col gap-4",
-				children: html`
-					${DialogHeader({
-						title: "Welcome to localgeist",
-					})}
-					<p class="text-sm text-foreground">
-						To get started, you need to connect at least one AI provider.
-						Options include local models (llama.cpp, Ollama, LM Studio),
-						cloud providers (Anthropic, OpenAI, Gemini), or API keys.
-					</p>
-					<div class="flex justify-end">
-						${Button({
-							variant: "default",
-							onClick: () => this.close(),
-							children: "Set up provider",
-						})}
-					</div>
-				`,
-			})}
-		`;
+            ${DialogContent({
+					className: "flex flex-col gap-4",
+					children: html`
+                    ${DialogHeader({
+								title: "Welcome to localgeist",
+							})}
+                    <p class="text-sm text-foreground">
+                        To get started, add at least one local provider.
+                        Supported: llama.cpp, Ollama, vLLM, LM Studio, and any OpenAI-compatible server.
+                    </p>
+                    <div class="flex justify-end">
+                        ${Button({
+									variant: "default",
+									onClick: () => this.close(),
+									children: "Set up provider",
+								})}
+                    </div>
+                `,
+				})}
+        `;
 	}
 }
 

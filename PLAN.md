@@ -32,6 +32,8 @@ localgeist is a local-first fork of [Sitegeist](https://github.com/badlogic/site
 - Session list delete confirmation, keyboard shortcut fix, tutorial pill title update
 - Renamed project to localgeist (all references, UI, manifests, code, docs)
 - Archived `site/` directory (marketing site no longer needed)
+- Removed cloud providers, local-only (Ollama, llama.cpp, vLLM, LM Studio)
+- Auto-select first model from custom providers on init
 
 ## Prioritize Local Models in UI
 

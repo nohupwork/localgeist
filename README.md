@@ -4,9 +4,9 @@
 
 An AI assistant that lives in your browser sidebar. Built for collaboration, not autonomy theater. You guide, it executes.
 
-localgeist can automate repetitive web tasks, extract data from any website, navigate across pages, fill out forms, compare products, compile research, and transform what it finds into documents, spreadsheets, or whatever you need. It works on any website through a Chrome/Edge side panel, using the AI provider of your choice.
+localgeist can automate repetitive web tasks, extract data from any website, navigate across pages, fill out forms, compare products, compile research, and transform what it finds into documents, spreadsheets, or whatever you need. It works on any website through a Chrome/Edge side panel, using your locally running LLM.
 
-Bring your own API key or log in with an existing subscription (Anthropic Claude, OpenAI/ChatGPT, GitHub Copilot, Google Gemini). Your data stays on your machine. Nothing is collected or tracked.
+Supports llama.cpp, Ollama, vLLM, LM Studio, and any OpenAI-compatible API. Everything runs locally — no cloud accounts, no subscriptions.
 
 ## Building & Install
 
@@ -53,7 +53,7 @@ The sibling repos `../mini-lit` and `../pi` are upstream dependencies. Do not mo
 
 ### First run
 
-On first launch, localgeist prompts you to connect at least one AI provider. Enter an API key for your provider.
+On first launch, localgeist prompts you to add a provider. Point it at your local LLM server and select a model.
 
 ## Checks
 

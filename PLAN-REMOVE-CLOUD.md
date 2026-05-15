@@ -74,6 +74,8 @@ Move `src/oauth/` to `archive/oauth/` — cloud-only code (Anthropic, OpenAI, Gi
 - Simplify text: remove mention of cloud API keys, focus on local models
 - Verify `openApiKeysDialog()` still works (opens Providers tab with custom providers)
 
+**Status:** DONE. `npm run check` and `npm run build` pass. Welcome dialog updated for local-only.
+
 ## Phase 5: Documentation
 
 **File:** `README.md`
@@ -89,6 +91,8 @@ Move `src/oauth/` to `archive/oauth/` — cloud-only code (Anthropic, OpenAI, Gi
 
 **File:** `PLAN.md`
 - Add to Completed: `Removed cloud providers, local-only (Ollama, llama.cpp, vLLM, LM Studio)`
+
+**Status:** DONE. `npm run check` and `npm run build` pass. README, CHANGELOG, PLAN updated.
 
 ## Execution Order
 
